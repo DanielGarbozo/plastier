@@ -5,7 +5,6 @@
 */
 include { MULTIQC                   } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap          } from 'plugin/nf-schema'
-include { samplesheetToList         } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText    } from '../subworkflows/local/utils_nfcore_plastier_pipeline'
@@ -51,16 +50,21 @@ workflow PLASTIER {
         FETCHNGS ( ch_ids )
         ch_versions = ch_versions.mix(FETCHNGS.out.versions)
 
+        // FETCHNGS's samplesheet.csv uses its own columns (sample, fastq_1, fastq_2, ...),
+        // distinct from assets/schema_input.json (bacass's ID/R1/R2/LongFastQ/Fast5 schema
+        // used for --input) - parsed directly here rather than through that schema.
+        // fetchngs only retrieves short reads, so longread/fast5 are always 'NA'.
         ch_bacass_input = FETCHNGS.out.samplesheet
-            .flatMap { csv -> samplesheetToList(csv, "${projectDir}/assets/schema_input.json") }
-            .map { meta, fastq_1, fastq_2 ->
-                fastq_2
-                    ? [ meta.id, meta + [ single_end: false ], [ fastq_1, fastq_2 ] ]
-                    : [ meta.id, meta + [ single_end: true ], [ fastq_1 ] ]
+            .splitCsv(header: true)
+            .map { row ->
+                def meta = [ id: row.sample, sample: row.sample ]
+                row.fastq_2
+                    ? [ row.sample, meta + [ single_end: false ], [ file(row.fastq_1, checkIfExists: true), file(row.fastq_2, checkIfExists: true) ], 'NA', 'NA' ]
+                    : [ row.sample, meta + [ single_end: true ], [ file(row.fastq_1, checkIfExists: true) ], 'NA', 'NA' ]
             }
             .groupTuple()
             .map { samplesheet -> validateInputSamplesheet(samplesheet) }
-            .map { meta, fastqs -> [ meta, fastqs.flatten() ] }
+            .map { meta, fastqs, longread, fast5 -> [ meta, fastqs.flatten(), longread, fast5[0] ] }
     } else {
         if (!params.input) {
             error("Either --input (a fastq samplesheet) or --sra_ids (a list of public accessions for nf-core/fetchngs) must be provided.")

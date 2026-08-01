@@ -2,32 +2,85 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/plastier/plastier/master/assets/schema_input.json",
     "title": "plastier/plastier pipeline - params.input schema",
-    "description": "Schema for the file provided with params.input",
+    "description": "Schema for the file provided with params.input. Matches nf-core/bacass's own --input schema since stage 2 (nf-core/bacass) is the consumer of this samplesheet - see subworkflows/local/bacass.",
     "type": "array",
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "ID": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
-                "meta": ["id"]
+                "unique": false,
+                "errorMessage": "Sample name must be provided, must be a string, and cannot contain spaces.",
+                "meta": ["sample"]
             },
-            "fastq_1": {
-                "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^([\\S\\s]*\\/)?[^\\s\\/]+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            "R1": {
+                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+                "anyOf": [
+                    {
+                        "type": ["string", "null"],
+                        "pattern": "^(\\S+\\.f(ast)?q\\.gz|NA)$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ]
             },
-            "fastq_2": {
-                "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^([\\S\\s]*\\/)?[^\\s\\/]+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            "R2": {
+                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+                "anyOf": [
+                    {
+                        "type": ["string", "null"],
+                        "pattern": "^(\\S+\\.f(ast)?q\\.gz|NA)$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ]
+            },
+            "LongFastQ": {
+                "errorMessage": "FastQ file for long reads cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+                "anyOf": [
+                    {
+                        "type": ["string", "null"],
+                        "pattern": "^(\\S+\\.f(ast)?q\\.gz|NA)$"
+                    },
+                    {
+                        "type": "string",
+                        "minLength": 0
+                    }
+                ]
+            },
+            "Fast5": {
+                "errorMessage": "A valid path to Fast5 files. Example: ./data/FAST5",
+                "anyOf": [
+                    {
+                        "type": ["string", "null"],
+                        "pattern": "^(\\/[\\S\\s]*|NA)$"
+                    },
+                    {
+                        "type": "string",
+                        "minLength": 0
+                    }
+                ]
+            },
+            "GenomeSize": {
+                "errorMessage": "A number (including decimals) ending with 'm', representing genome size. No spaces allowed.",
+                "meta": ["gsize"],
+                "anyOf": [
+                    {
+                        "type": ["string", "null"],
+                        "pattern": "(\\b\\d+\\.\\d+m\\b|NA)"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["ID"]
     }
 }
