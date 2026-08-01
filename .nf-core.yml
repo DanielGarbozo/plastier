@@ -17,6 +17,8 @@ lint:
   nextflow_config:
     - manifest.name
     - manifest.homePage
+    - config_defaults:
+        - params.dfast_config
   multiqc_config:
     - report_comment
   files_exist:
