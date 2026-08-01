@@ -1,0 +1,60 @@
+nextflow_workflow {
+
+    name "Test Subworkflow BACASS"
+    script "../main.nf"
+    workflow "BACASS"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/bacass"
+    tag "unicycler"
+    tag "prokka"
+    tag "quast"
+    tag "fastp"
+    tag "fastqc"
+
+    test("Short-read unicycler assembly - ERR044595, ERR064912 (S. aureus, bacass CI test data)") {
+
+        when {
+            params {
+                outdir          = "$outputDir"
+                assembly_type   = 'short'
+                assembler       = 'unicycler'
+                prokka_args     = ' --fast'
+                skip_kraken2    = true
+                skip_kmerfinder = true
+                skip_pycoqc     = true
+                skip_busco      = true
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ sample: 'ERR044595', single_end: false ], // meta map
+                        [
+                            file('https://github.com/nf-core/test-datasets/raw/bacass/ERR044595_1M_1.fastq.gz', checkIfExists: true),
+                            file('https://github.com/nf-core/test-datasets/raw/bacass/ERR044595_1M_2.fastq.gz', checkIfExists: true)
+                        ],
+                        'NA', // no long reads
+                        'NA'  // no fast5
+                    ],
+                    [
+                        [ sample: 'ERR064912', single_end: false ], // meta map
+                        [
+                            file('https://github.com/nf-core/test-datasets/raw/bacass/ERR064912_1M_1.fastq.gz', checkIfExists: true),
+                            file('https://github.com/nf-core/test-datasets/raw/bacass/ERR064912_1M_2.fastq.gz', checkIfExists: true)
+                        ],
+                        'NA', // no long reads
+                        'NA'  // no fast5
+                    ]
+                )
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+    }
+}
