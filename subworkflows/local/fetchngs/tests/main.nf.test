@@ -1,0 +1,36 @@
+nextflow_workflow {
+
+    name "Test Subworkflow FETCHNGS"
+    script "../main.nf"
+    config "subworkflows/local/fetchngs/tests/nextflow.config"
+    workflow "FETCHNGS"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/fetchngs"
+    tag "SRA_IDS_TO_RUNINFO"
+    tag "SRA_RUNINFO_TO_FTP"
+    tag "SRA_FASTQ_FTP"
+    tag "SRA_TO_SAMPLESHEET"
+
+    test("Parameters: default - ERR044595, ERR064912 (S. aureus, ENA FTP)") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = Channel.of("ERR044595", "ERR064912")
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.out.samplesheet
+            assert path(workflow.out.samplesheet.get(0)).exists()
+            assert path(workflow.out.samplesheet.get(0)).size() > 0
+        }
+    }
+}
