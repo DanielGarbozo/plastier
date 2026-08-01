@@ -1,0 +1,13 @@
+.nextflow*
+work/
+.nf-test/
+.nf-test.log
+.nf-test-*.nf
+data/
+results/
+.DS_Store
+testing/
+testing*
+*.pyc
+null/
+.lineage/
