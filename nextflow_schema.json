@@ -10,7 +10,9 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["outdir"],
+            "required": [
+                "outdir"
+            ],
             "properties": {
                 "input": {
                     "type": "string",
@@ -110,7 +112,14 @@
                     "description": "Method used to save pipeline results to output directory.",
                     "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
                     "fa_icon": "fas fa-copy",
-                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+                    "enum": [
+                        "symlink",
+                        "rellink",
+                        "link",
+                        "copy",
+                        "copyNoFollow",
+                        "move"
+                    ],
                     "hidden": true
                 },
                 "max_multiqc_email_size": {
@@ -166,7 +175,10 @@
                     "hidden": true
                 },
                 "help": {
-                    "type": ["boolean", "string"],
+                    "type": [
+                        "boolean",
+                        "string"
+                    ],
                     "description": "Display the help message."
                 },
                 "help_full": {
@@ -176,6 +188,350 @@
                 "show_hidden": {
                     "type": "boolean",
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+                }
+            }
+        },
+        "fetchngs_options": {
+            "title": "Fetchngs options",
+            "type": "object",
+            "fa_icon": "fas fa-cloud-download-alt",
+            "description": "Options for stage 1 (nf-core/fetchngs) - public SRA/ENA/DDBJ/GEO read retrieval, used when --sra_ids is set.",
+            "properties": {
+                "nf_core_pipeline": {
+                    "type": "string",
+                    "fa_icon": "fab fa-apple",
+                    "description": "Name of supported nf-core pipeline e.g. 'rnaseq'. A samplesheet for direct use with the pipeline will be created with the appropriate columns.",
+                    "enum": [
+                        "rnaseq",
+                        "atacseq",
+                        "viralrecon",
+                        "taxprofiler"
+                    ]
+                },
+                "nf_core_rnaseq_strandedness": {
+                    "type": "string",
+                    "fa_icon": "fas fa-dna",
+                    "description": "Value for 'strandedness' entry added to samplesheet created when using '--nf_core_pipeline rnaseq'.",
+                    "help_text": "The default is 'auto' which can be used with nf-core/rnaseq v3.10 onwards to auto-detect strandedness during the pipeline execution.",
+                    "default": "auto"
+                },
+                "ena_metadata_fields": {
+                    "type": "string",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Comma-separated list of ENA metadata fields to fetch before downloading data.",
+                    "help_text": "The default list of fields used by the pipeline can be found at the top of the [`bin/sra_ids_to_runinfo.py`](https://github.com/nf-core/fetchngs/blob/master/bin/sra_ids_to_runinfo.py) script within the pipeline repo. This pipeline requires a minimal set of fields to download FastQ files i.e. `'run_accession,experiment_accession,library_layout,fastq_ftp,fastq_md5'`. Full list of accepted metadata fields can be obtained from the [ENA API](https://www.ebi.ac.uk/ena/portal/api/returnFields?dataPortal=ena&format=tsv&result=read_run)."
+                },
+                "sample_mapping_fields": {
+                    "type": "string",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Comma-separated list of ENA metadata fields used to create a separate 'id_mappings.csv' and 'multiqc_config.yml' with selected fields that can be used to rename samples in general and in MultiQC.",
+                    "default": "experiment_accession,run_accession,sample_accession,experiment_alias,run_alias,sample_alias,experiment_title,sample_title,sample_description"
+                },
+                "download_method": {
+                    "type": "string",
+                    "default": "ftp",
+                    "fa_icon": "fas fa-download",
+                    "enum": [
+                        "aspera",
+                        "ftp",
+                        "sratools"
+                    ],
+                    "description": "Method to download FastQ files. Available options are 'aspera', 'ftp' or 'sratools'. Default is 'ftp'.",
+                    "help_text": "FTP and Aspera CLI download FastQ files directly from the ENA FTP whereas sratools uses sra-tools to download *.sra files and convert to FastQ."
+                },
+                "skip_fastq_download": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-fast-forward",
+                    "description": "Only download metadata for public data database ids and don't download the FastQ files."
+                },
+                "dbgap_key": {
+                    "type": "string",
+                    "fa_icon": "fas fa-address-card",
+                    "help_text": "Path to a JWT cart file used to access protected dbGAP data on SRA using the sra-toolkit. Users with granted access to controlled data can download the JWT cart file for the study from the SRA Run Selector upon logging in. The JWT file can only be used on cloud platforms and is valid for 1 hour upon creation.",
+                    "format": "file-path",
+                    "description": "dbGaP repository key."
+                }
+            }
+        },
+        "qc_and_trim": {
+            "title": "QC and Trim",
+            "type": "object",
+            "fa_icon": null,
+            "description": "Parameters for QC and trim short-reads",
+            "properties": {
+                "save_trimmed_fail": {
+                    "type": "boolean",
+                    "description": "save files that failed to pass trimming thresholds ending in `*.fail.fastq.gz`"
+                },
+                "discard_trimmed_pass": {
+                    "type": "boolean",
+                    "description": "Specify true to not write any reads that pass trimming thresholds.This can be used to use fastp for the output report only."
+                },
+                "long_reads_filtering": {
+                    "type": "string",
+                    "default": "porechop",
+                    "description": "Tool for ONT read filtering"
+                },
+                "skip_fastp": {
+                    "type": "boolean",
+                    "description": "Skip FastP"
+                },
+                "skip_fastqc": {
+                    "type": "boolean",
+                    "description": "Skip FastQC"
+                },
+                "skip_nanoplot": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip Nanoplot"
+                },
+                "skip_toulligqc": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip ToulligQC"
+                },
+                "rasusa": {
+                    "type": "boolean",
+                    "description": "Use Rasusa to downsample reads to a target coverage",
+                    "fa_icon": "fas fa-compress-arrows-alt"
+                },
+                "rasusa_coverage": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Target coverage for Rasusa read downsampling"
+                }
+            }
+        },
+        "contamination_screening": {
+            "title": "Contamination Screening",
+            "type": "object",
+            "fa_icon": "fas fa-box",
+            "description": "",
+            "properties": {
+                "kraken2db": {
+                    "type": "string",
+                    "fa_icon": "fab fa-gitkraken",
+                    "help_text": "See [Kraken2 homepage](https://benlangmead.github.io/aws-indexes/k2) for download\nlinks. Minikraken2 8GB is a reasonable choice, since we run Kraken here mainly just to check for\nsample purity.",
+                    "description": "Path to Kraken2 database."
+                },
+                "kmerfinderdb": {
+                    "type": "string",
+                    "description": "Path to the KmerFinder bacteria database (e.g. `/path_to/kmerfinder/`, `/path_to/kmerfinder/bacteria/` or `/path_to/kmerfinder/bacteria.tar.gz`). Only taxonomic group `bacteria` is supported. If a directory is provided, the pipeline auto-detects whether it already includes the `bacteria/` level. See installation guidelines: [https://bitbucket.org/genomicepidemiology/kmerfinder_db/src/master/](https://bitbucket.org/genomicepidemiology/kmerfinder_db/src/master/). Example: `--kmerfinderdb 'ftp://ftp.cbs.dtu.dk/public/CGE/databases/KmerFinder/version/latest/bacteria.tar.gz'` (FTP download is ~30GB and can be slow; prefer pre-downloading and passing a local `.tar.gz`). Older version: [https://zenodo.org/records/13447056/files/20190108_kmerfinder_stable_dirs.tar.gz](https://zenodo.org/records/13447056/files/20190108_kmerfinder_stable_dirs.tar.gz)."
+                },
+                "reference_fasta": {
+                    "type": "string",
+                    "description": "Reference FASTA file."
+                },
+                "reference_gff": {
+                    "type": "string",
+                    "description": "Reference GFF file."
+                }
+            }
+        },
+        "assembly_parameters": {
+            "title": "Assembly parameters",
+            "type": "object",
+            "fa_icon": "fas fa-puzzle-piece",
+            "description": "Parameters for the assembly",
+            "properties": {
+                "assembler": {
+                    "type": "string",
+                    "default": "autocycler,canu,dragonflye,flye,megahit,miniasm,unicycler,raven",
+                    "fa_icon": "fas fa-puzzle-piece",
+                    "description": "The assembler(s) to use for assembly.",
+                    "help_text": "Use the appropriate assembler(s) according to the chosen assembly_type. Can be one or multiple of the available assemblers (e.g. unicycler, megahit, canu, miniasm, dragonflye, autocycler, raven, flye, ...) as comma separated string (e.g. `-- assembler \"megahit,unicycler\"`)."
+                },
+                "assembly_type": {
+                    "type": "string",
+                    "fa_icon": "fas fa-fingerprint",
+                    "help_text": "This adjusts the type of assembly done with the input data and can be any of `long`, `short` or `hybrid`.",
+                    "description": "Which type of assembly to perform.",
+                    "enum": [
+                        "short",
+                        "long",
+                        "hybrid"
+                    ]
+                },
+                "unicycler_args": {
+                    "type": "string",
+                    "fa_icon": "fas fa-bicycle",
+                    "description": "Extra arguments for Unicycler",
+                    "help_text": "This advanced option allows you to pass extra arguments to Unicycler (e.g. `\"--mode conservative\"` or `\"--no_correct\"`). For this to work you need to quote the arguments and add at least one space."
+                },
+                "canu_mode": {
+                    "type": "string",
+                    "enum": [
+                        "-pacbio",
+                        "-nanopore",
+                        "-pacbio-hifi",
+                        "null"
+                    ],
+                    "description": "Allowed technologies for long read assembly with CANU."
+                },
+                "autocycler_assemblers": {
+                    "type": "string",
+                    "default": "canu,flye,miniasm,raven",
+                    "description": "What assemblers to use for autocycler",
+                    "help_text": "Comma separated string of assemblers. For example 'canu,flye,raven'. Allowed is any subset and combination of canu, flye, raven, miniasm ..."
+                },
+                "flye_mode": {
+                    "type": "string",
+                    "default": "--nano-raw",
+                    "enum": [
+                        "--pacbio-raw",
+                        "--pacbio-corr",
+                        "--pacbio-hifi",
+                        "--nano-raw",
+                        "--nano-corr",
+                        "--nano-hq"
+                    ],
+                    "description": "Allowed technologies for long read assembly with Flye."
+                }
+            }
+        },
+        "busco_options": {
+            "title": "BUSCO options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Options for running BUSCO",
+            "properties": {
+                "busco_lineage": {
+                    "type": "string",
+                    "default": "bacteria_odb10",
+                    "description": "BUSCO lineage to use, you can use other BUSCO lineages, these are available in: https://busco.ezlab.org/list_of_lineages.html"
+                },
+                "busco_mode": {
+                    "type": "string",
+                    "default": "genome",
+                    "description": "BUSCO mode to use",
+                    "enum": [
+                        "genome",
+                        "proteins",
+                        "transcriptome"
+                    ]
+                },
+                "busco_db_path": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Path to BUSCO database"
+                },
+                "busco_config_file": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Path to BUSCO config file"
+                },
+                "busco_clean_intermediates": {
+                    "type": "boolean",
+                    "description": "Clean intermediate BUSCO files"
+                }
+            }
+        },
+        "assembly_polishing": {
+            "title": "Assembly Polishing",
+            "type": "object",
+            "fa_icon": "fas fa-user-astronaut",
+            "description": "",
+            "properties": {
+                "polish_method": {
+                    "type": "string",
+                    "default": "medaka",
+                    "fa_icon": "fas fa-hotdog",
+                    "description": "Which assembly polishing method to use.",
+                    "help_text": "Can be used to define which polishing method is used by default for long reads.",
+                    "enum": [
+                        "medaka",
+                        "nanopolish",
+                        "none"
+                    ]
+                }
+            }
+        },
+        "annotation": {
+            "title": "Annotation",
+            "type": "object",
+            "fa_icon": "fas fa-align-left",
+            "description": "Parameters for the annotation",
+            "properties": {
+                "annotation_tool": {
+                    "type": "string",
+                    "default": "prokka",
+                    "description": "The annotation method to annotate the final assembly.",
+                    "enum": [
+                        "prokka",
+                        "bakta",
+                        "dfast",
+                        "liftoff"
+                    ]
+                },
+                "prokka_args": {
+                    "type": "string",
+                    "description": "Extra arguments for prokka annotation tool.",
+                    "help_text": "This advanced option allows you to pass extra arguments to Prokka (e.g. `\" --rfam\"` or `\" --genus name\"`). For this to work you need to quote the arguments and add at least one space between the arguments. Example:\n\n```bash\n--prokka_args `--rfam --genus Escherichia Coli`\n```\n"
+                },
+                "prokka_proteins": {
+                    "type": "string",
+                    "description": "FASTA file with protein sequences to be used as reference by PROKKA.",
+                    "help_text": "If a file with protein sequences are provided, PROKKA will use this to annotate proteins in the assembly."
+                },
+                "baktadb": {
+                    "type": "string",
+                    "description": "Path to Bakta database"
+                },
+                "baktadb_download": {
+                    "type": "boolean",
+                    "description": "Download Bakta database"
+                },
+                "dfast_config": {
+                    "type": "string",
+                    "default": "assets/test_config_dfast.py",
+                    "description": "Specifies a configuration file for the [DFAST](https://github.com/nigyta/dfast_core) annotation method.",
+                    "help_text": "If you want to know how to create your config file, please refer to the [DFAST](https://github.com/nigyta/dfast_core) readme on how to create one.  The default config (`assets/test_config_dfast.py`) is just included for testing, so if you want to annotate using DFAST, you have to create a config!"
+                },
+                "liftoff_ref_from_kmerfinder": {
+                    "type": "boolean",
+                    "description": "Use the reference files (.fasta, .gff) from kmerfinder step for LIFTOFF."
+                }
+            }
+        },
+        "skipping_options": {
+            "title": "Skipping Options",
+            "type": "object",
+            "fa_icon": "fas fa-forward",
+            "description": "",
+            "properties": {
+                "skip_kraken2": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip running Kraken2 classifier on reads."
+                },
+                "skip_kmerfinder": {
+                    "type": "boolean",
+                    "description": "Skip contamination analysis with [Kmerfinder](https://bitbucket.org/genomicepidemiology/kmerfinder/src/master/)",
+                    "fa_icon": "fas fa-forward"
+                },
+                "skip_annotation": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip annotating the assembly with Prokka /DFAST."
+                },
+                "skip_pycoqc": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip running `PycoQC` on long read input."
+                },
+                "skip_busco": {
+                    "type": "boolean",
+                    "description": "Skip BUSCO",
+                    "fa_icon": "fas fa-forward"
+                },
+                "skip_polish": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip polishing the long-read assembly with fast5 input. Will not affect short/hybrid assemblies."
                 }
             }
         }
@@ -189,6 +545,30 @@
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/fetchngs_options"
+        },
+        {
+            "$ref": "#/$defs/qc_and_trim"
+        },
+        {
+            "$ref": "#/$defs/contamination_screening"
+        },
+        {
+            "$ref": "#/$defs/assembly_parameters"
+        },
+        {
+            "$ref": "#/$defs/busco_options"
+        },
+        {
+            "$ref": "#/$defs/assembly_polishing"
+        },
+        {
+            "$ref": "#/$defs/annotation"
+        },
+        {
+            "$ref": "#/$defs/skipping_options"
         }
     ]
 }
