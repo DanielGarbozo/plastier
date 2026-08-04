@@ -57,4 +57,35 @@ nextflow_workflow {
             assert workflow.success
         }
     }
+test("Single-end unicycler assembly - ERR044595 R1 only (S. aureus, bacass CI test data)") {
+        when {
+            params {
+                outdir          = "$outputDir"
+                assembly_type   = 'short'
+                assembler       = 'unicycler'
+                prokka_args     = ' --fast'
+                skip_kraken2    = true
+                skip_kmerfinder = true
+                skip_pycoqc     = true
+                skip_busco      = true
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ sample: 'ERR044595_SE', single_end: true ], // meta map
+                        [
+                            file('https://github.com/nf-core/test-datasets/raw/bacass/ERR044595_1M_1.fastq.gz', checkIfExists: true)
+                        ],
+                        'NA', // no long reads
+                        'NA'  // no fast5
+                    ]
+                )
+                """
+            }
+        }
+        then {
+            assert workflow.success
+        }
+    }
 }
