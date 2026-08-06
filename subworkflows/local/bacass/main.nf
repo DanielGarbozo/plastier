@@ -961,10 +961,10 @@ workflow BACASS {
         ch_kmerfinder_multiqc.collectFile(name: 'multiqc_kmerfinder.yaml').ifEmpty([]),
     )
 
-    emit:
-    multiqc_report = CUSTOM_MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                        // channel: [ path(versions.yml) ]
-
+	emit:
+	assembly       = ch_assembly
+	multiqc_report = CUSTOM_MULTIQC.out.report.toList()
+	versions       = ch_versions
 }
 
 /*
