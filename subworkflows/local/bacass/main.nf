@@ -962,6 +962,7 @@ workflow BACASS {
     )
 
     emit:
+    assembly       = ch_assembly                        // channel: [ val(meta), path(assembly) ]
     multiqc_report = CUSTOM_MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                        // channel: [ path(versions.yml) ]
 
