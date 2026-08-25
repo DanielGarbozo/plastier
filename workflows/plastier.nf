@@ -98,12 +98,10 @@ workflow PLASTIER {
     ch_versions = ch_versions.mix(ARG.out.versions)
 
     //
-    // STAGE 4: plasmid classification via MOB-suite (Platon and RFPlasmid not yet vendored)
+    // STAGE 4: plasmid classification via MOB-suite, Platon, and RFPlasmid
     //
-    // Runs off the same assembly as everything else. Only mob_recon exists so far
-    // (issue #8) - Platon (#9) and RFPlasmid (#10) are still open. Stage 5 (evidence
-    // integration) needs all three before it can compute the classifier-agreement
-    // signal the four-tier framework depends on.
+    // Runs off the same assembly as everything else. All three classifiers are
+    // vendored (issues #8, #9, #10) - stage 4 is complete.
     //
     PLASMID_CLASSIFICATION ( BACASS.out.assembly )
     ch_versions = ch_versions.mix(PLASMID_CLASSIFICATION.out.versions)
@@ -112,8 +110,8 @@ workflow PLASTIER {
     // STAGE 5: evidence integration - resolve ARG calls into the four-tier
     // confidence framework (see CLAUDE.md and issue #23)
     //
-    // Only the classifier-agreement signal (#24) is wired so far. #25-#29
-    // (replicon/mobility markers, circularisation/coverage, contig-length
+    // Classifier-agreement (#24) and replicon/mobility-marker (#25) signals
+    // are wired so far. #26-#29 (circularisation/coverage, contig-length
     // floor, SCCmec override, and the tier-resolution rule engine itself)
     // are not yet built - subworkflows/local/evidence_integration/main.nf
     // has the up-to-date status.

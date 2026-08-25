@@ -4,7 +4,7 @@
 
     Built incrementally, one signal per sub-issue:
     - #24 classifier-agreement signal: DONE (CLASSIFIER_AGREEMENT below)
-    - #25 replicon/mobility marker evidence: not yet wired
+    - #25 replicon/mobility marker evidence: DONE (MOBILITY_MARKERS below)
     - #26 circularisation/coverage-ratio evidence: not yet wired
     - #27 validated contig-length floor: not yet wired
     - #28 SCCmec-cassette override: not yet wired
@@ -29,6 +29,7 @@
 */
 
 include { CLASSIFIER_AGREEMENT } from '../../../modules/local/classifier_agreement/main'
+include { MOBILITY_MARKERS     } from '../../../modules/local/mobility_markers/main'
 
 workflow EVIDENCE_INTEGRATION {
     take:
@@ -48,7 +49,11 @@ workflow EVIDENCE_INTEGRATION {
     CLASSIFIER_AGREEMENT ( ch_classifier_inputs, arg_report.first() )
     ch_versions = ch_versions.mix(CLASSIFIER_AGREEMENT.out.versions)
 
+    MOBILITY_MARKERS ( mobsuite_contig_report, arg_report.first() )
+    ch_versions = ch_versions.mix(MOBILITY_MARKERS.out.versions)
+
     emit:
     classifier_agreement = CLASSIFIER_AGREEMENT.out.tsv // channel: [ val(meta), path(*.classifier_agreement.tsv) ] - feeds stage 5f (#29)
+    mobility_markers      = MOBILITY_MARKERS.out.tsv    // channel: [ val(meta), path(*.mobility_markers.tsv) ] - feeds stage 5f (#29)
     versions              = ch_versions
 }

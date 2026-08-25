@@ -60,6 +60,16 @@ nextflow_workflow {
             assert sampleB_tsv.contains("geneZ\tchrB\tchrB\tchromosome\tchromosome\tplasmid\t3\t1\t2\tmajority_chromosome")
             assert !sampleB_tsv.contains("geneX")
             assert !sampleB_tsv.contains("geneY")
+
+            def markerOutputs = workflow.out.mobility_markers.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_markers = path(markerOutputs['sampleA']).text
+            def sampleB_markers = path(markerOutputs['sampleB']).text
+
+            // plasA has a replicon marker (rep_cluster_1234) -> has_marker True;
+            // chrA and chrB have neither rep_type nor relaxase_type -> False.
+            assert sampleA_markers.contains("geneX\tchrA\tchrA\t-\t-\t-\tFalse")
+            assert sampleA_markers.contains("geneY\tplasA\tplasA\trep_cluster_1234\t-\tMobilizable\tTrue")
+            assert sampleB_markers.contains("geneZ\tchrB\tchrB\t-\t-\t-\tFalse")
         }
     }
 }
