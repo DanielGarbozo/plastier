@@ -12,6 +12,7 @@ include { validateInputSamplesheet  } from '../subworkflows/local/utils_nfcore_p
 include { FETCHNGS                  } from '../subworkflows/local/fetchngs/main'
 include { BACASS                    } from '../subworkflows/local/bacass/main'
 include { ARG                       } from '../subworkflows/local/funcscan_arg/main'
+include { PLASMID_CLASSIFICATION    } from '../subworkflows/local/plasmid_classification/main'
 include { TYPING                    } from '../subworkflows/local/typing/main'
 
 /*
@@ -94,6 +95,17 @@ workflow PLASTIER {
         channel.empty(),
     )
     ch_versions = ch_versions.mix(ARG.out.versions)
+
+    //
+    // STAGE 4: plasmid classification via MOB-suite (Platon and RFPlasmid not yet vendored)
+    //
+    // Runs off the same assembly as everything else. Only mob_recon exists so far
+    // (issue #8) - Platon (#9) and RFPlasmid (#10) are still open. Stage 5 (evidence
+    // integration) needs all three before it can compute the classifier-agreement
+    // signal the four-tier framework depends on.
+    //
+    PLASMID_CLASSIFICATION ( BACASS.out.assembly )
+    ch_versions = ch_versions.mix(PLASMID_CLASSIFICATION.out.versions)
 
     //
     // STAGE 6: strain typing via MLST, spa typing, and SCCmec typing
