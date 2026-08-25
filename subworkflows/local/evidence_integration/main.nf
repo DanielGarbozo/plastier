@@ -6,9 +6,11 @@
     - #24 classifier-agreement signal: DONE (CLASSIFIER_AGREEMENT below)
     - #25 replicon/mobility marker evidence: DONE (MOBILITY_MARKERS below)
     - #26 circularisation/coverage-ratio evidence: DONE (CIRCULARITY_COVERAGE below)
-    - #27 validated contig-length floor: not yet wired
-    - #28 SCCmec-cassette override: not yet wired
-    - #29 tier-resolution rule engine (combines all of the above): not yet wired
+    - #27 validated contig-length floor: DONE (CONTIG_LENGTH_FLOOR below)
+    - #28 SCCmec-cassette override: DONE (SCCMEC_OVERRIDE below)
+    - #29 tier-resolution rule engine (combines all of the above): DONE (TIER_RESOLUTION below)
+
+    Stage 5 is now complete: `tier` is the final per-ARG four-tier call.
 
     MOB-suite/Platon/RFPlasmid outputs stay one-file-per-sample all the way
     through subworkflows/local/plasmid_classification, so they join cleanly on
@@ -31,14 +33,18 @@
 include { CLASSIFIER_AGREEMENT  } from '../../../modules/local/classifier_agreement/main'
 include { MOBILITY_MARKERS      } from '../../../modules/local/mobility_markers/main'
 include { CIRCULARITY_COVERAGE  } from '../../../modules/local/circularity_coverage/main'
+include { CONTIG_LENGTH_FLOOR   } from '../../../modules/local/contig_length_floor/main'
+include { SCCMEC_OVERRIDE       } from '../../../modules/local/sccmec_override/main'
+include { TIER_RESOLUTION       } from '../../../modules/local/tier_resolution/main'
 
 workflow EVIDENCE_INTEGRATION {
     take:
-    arg_report             // path: hamronization_combined_report.tsv (all samples, stage 3)
+    arg_report              // path: hamronization_combined_report.tsv (all samples, stage 3)
     assembly                // channel: [ val(meta), path(fasta) ], possibly gzipped (stage 2, BACASS.out.assembly)
-    mobsuite_contig_report // channel: [ val(meta), path(contig_report.txt) ] (stage 4)
-    platon_tsv             // channel: [ val(meta), path(*.tsv) ] - empty channel if --plasmid_skip_platon
-    rfplasmid_prediction   // channel: [ val(meta), path(prediction.csv) ] (stage 4)
+    mobsuite_contig_report  // channel: [ val(meta), path(contig_report.txt) ] (stage 4)
+    platon_tsv              // channel: [ val(meta), path(*.tsv) ] - empty channel if --plasmid_skip_platon
+    rfplasmid_prediction    // channel: [ val(meta), path(prediction.csv) ] (stage 4)
+    sccmecextractor_report  // channel: [ val(meta), path(sccmec_unified_report.tsv) ] (stage 6)
 
     main:
     ch_versions = channel.empty()
@@ -57,9 +63,27 @@ workflow EVIDENCE_INTEGRATION {
     CIRCULARITY_COVERAGE ( assembly, arg_report.first() )
     ch_versions = ch_versions.mix(CIRCULARITY_COVERAGE.out.versions)
 
+    CONTIG_LENGTH_FLOOR ( assembly, arg_report.first() )
+    ch_versions = ch_versions.mix(CONTIG_LENGTH_FLOOR.out.versions)
+
+    SCCMEC_OVERRIDE ( sccmecextractor_report, arg_report.first() )
+    ch_versions = ch_versions.mix(SCCMEC_OVERRIDE.out.versions)
+
+    ch_tier_inputs = CLASSIFIER_AGREEMENT.out.tsv
+        .join(MOBILITY_MARKERS.out.tsv)
+        .join(CIRCULARITY_COVERAGE.out.tsv)
+        .join(CONTIG_LENGTH_FLOOR.out.tsv)
+        .join(SCCMEC_OVERRIDE.out.tsv)
+
+    TIER_RESOLUTION ( ch_tier_inputs )
+    ch_versions = ch_versions.mix(TIER_RESOLUTION.out.versions)
+
     emit:
-    classifier_agreement = CLASSIFIER_AGREEMENT.out.tsv  // channel: [ val(meta), path(*.classifier_agreement.tsv) ] - feeds stage 5f (#29)
-    mobility_markers      = MOBILITY_MARKERS.out.tsv     // channel: [ val(meta), path(*.mobility_markers.tsv) ] - feeds stage 5f (#29)
-    circularity_coverage  = CIRCULARITY_COVERAGE.out.tsv // channel: [ val(meta), path(*.circularity_coverage.tsv) ] - feeds stage 5f (#29)
+    classifier_agreement = CLASSIFIER_AGREEMENT.out.tsv  // channel: [ val(meta), path(*.classifier_agreement.tsv) ]
+    mobility_markers      = MOBILITY_MARKERS.out.tsv     // channel: [ val(meta), path(*.mobility_markers.tsv) ]
+    circularity_coverage  = CIRCULARITY_COVERAGE.out.tsv // channel: [ val(meta), path(*.circularity_coverage.tsv) ]
+    contig_length_floor   = CONTIG_LENGTH_FLOOR.out.tsv  // channel: [ val(meta), path(*.contig_length_floor.tsv) ]
+    sccmec_override       = SCCMEC_OVERRIDE.out.tsv      // channel: [ val(meta), path(*.sccmec_override.tsv) ]
+    tier_resolution        = TIER_RESOLUTION.out.tsv      // channel: [ val(meta), path(*.tier_resolution.tsv) ] - the final per-ARG four-tier call (stage 7, #22, validates this)
     versions              = ch_versions
 }

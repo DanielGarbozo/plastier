@@ -107,15 +107,26 @@ workflow PLASTIER {
     ch_versions = ch_versions.mix(PLASMID_CLASSIFICATION.out.versions)
 
     //
+    // STAGE 6: strain typing via MLST, spa typing, SCCmec typing, and SCCmec
+    // cassette extraction
+    //
+    // Separates horizontal transfer from clonal expansion (CLAUDE.md stage 6).
+    // Run before stage 5 below (out of numeric order) because evidence
+    // integration's SCCmec-cassette override (#28) consumes
+    // TYPING.out.sccmecextractor_report directly - Nextflow only cares about
+    // the actual data dependency, not the stage numbering, but the channel
+    // has to be defined before it's referenced.
+    //
+    TYPING ( BACASS.out.assembly )
+    ch_versions = ch_versions.mix(TYPING.out.versions)
+
+    //
     // STAGE 5: evidence integration - resolve ARG calls into the four-tier
     // confidence framework (see CLAUDE.md and issue #23)
     //
-    // Classifier-agreement (#24), replicon/mobility-marker (#25), and
-    // circularisation/coverage-ratio (#26) signals are wired so far. #27-#29
-    // (contig-length floor, SCCmec override, and the tier-resolution rule
-    // engine itself) are not yet built -
-    // subworkflows/local/evidence_integration/main.nf has the up-to-date
-    // status.
+    // All six signals (#24-#29) are wired - stage 5 is complete. `tier` in
+    // EVIDENCE_INTEGRATION.out.tier_resolution is the final per-ARG call that
+    // stage 7 (#22, not yet built) will validate.
     //
     EVIDENCE_INTEGRATION (
         ARG.out.report,
@@ -123,20 +134,9 @@ workflow PLASTIER {
         PLASMID_CLASSIFICATION.out.mobsuite_contig_report,
         PLASMID_CLASSIFICATION.out.platon_tsv,
         PLASMID_CLASSIFICATION.out.rfplasmid_prediction,
+        TYPING.out.sccmecextractor_report,
     )
     ch_versions = ch_versions.mix(EVIDENCE_INTEGRATION.out.versions)
-
-    //
-    // STAGE 6: strain typing via MLST, spa typing, and SCCmec typing
-    //
-    // Separates horizontal transfer from clonal expansion (CLAUDE.md stage 6).
-    // A typed SCCmec cassette is also stage 5's (evidence integration, not yet
-    // built) route to resolving the chromosomal tier: SCCmec carries its own
-    // integrase/mobility genes, so a naive plasmid classifier can mistake an
-    // ARG sitting inside it for mobile signal when it's actually chromosomal.
-    //
-    TYPING ( BACASS.out.assembly )
-    ch_versions = ch_versions.mix(TYPING.out.versions)
 
     //
     // Collate and save software versions

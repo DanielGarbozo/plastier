@@ -937,6 +937,13 @@
                     "fa_icon": "fas fa-chart-line",
                     "help_text": "Minimum assembly-relative depth (Unicycler's own depth=X.XXx header, already normalised to the assembly's median contig depth) for a contig to count as plasmid-like multi-copy coverage rather than baseline chromosomal depth, feeding the High-confidence plasmid tier's coverage-ratio condition. See docs/decisions.md (2026-08-25 entry) for why 1.5 was chosen as a placeholder default, not a calibrated one.",
                     "description": "Minimum depth ratio (relative to assembly median) to count as plasmid-like coverage."
+                },
+                "plasmid_min_contig_length": {
+                    "type": "integer",
+                    "default": 1000,
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "help_text": "Contigs shorter than this (bp) are excluded from transfer claims and routed to the Ambiguous tier, regardless of what the classifiers say - assembly fragmentation and misassembly make short-contig calls unreliable. Not yet calibrated against this pipeline's own validation data (stage 7, issue #22).",
+                    "description": "Minimum contig length (bp) for a plasmid/chromosome call to be trusted."
                 }
             }
         }

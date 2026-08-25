@@ -12,6 +12,14 @@ nextflow_workflow {
     test("Two samples, hand-crafted fixtures - classifier agreement resolves per contig, ARG report filtered per sample") {
 
         when {
+            params {
+                // These fixture contigs are 40-100bp - far below the pipeline's real
+                // 1000bp default (--plasmid_min_contig_length). Lowered here so the
+                // length-floor signal doesn't swamp every other assertion in this
+                // test; contig_length_floor's own behaviour is exercised directly by
+                // its column values below, not by hitting the real-world default.
+                plasmid_min_contig_length = 30
+            }
             workflow {
                 """
                 def dataDir = "\${projectDir}/subworkflows/local/evidence_integration/tests/data"
@@ -32,6 +40,10 @@ nextflow_workflow {
                 input[4] = Channel.of(
                     [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.prediction.csv", checkIfExists: true) ],
                     [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.prediction.csv", checkIfExists: true) ]
+                )
+                input[5] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.sccmec_unified_report.tsv", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.sccmec_unified_report.tsv", checkIfExists: true) ]
                 )
                 """
             }
@@ -85,6 +97,40 @@ nextflow_workflow {
             assert sampleA_cov.contains("geneY\tplasA\tplasA\tTrue\t3.0\tTrue\tTrue")
             // chrB: depth=0.98x, not circular -> no high-confidence evidence
             assert sampleB_cov.contains("geneZ\tchrB\tchrB\tFalse\t0.98\tFalse\tFalse")
+
+            def lengthOutputs = workflow.out.contig_length_floor.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_length = path(lengthOutputs['sampleA']).text
+            def sampleB_length = path(lengthOutputs['sampleB']).text
+
+            // all three fixture contigs clear the test's lowered 30bp floor (see params above)
+            assert sampleA_length.contains("geneX\tchrA\tchrA\t100\tFalse")
+            assert sampleA_length.contains("geneY\tplasA\tplasA\t40\tFalse")
+            assert sampleB_length.contains("geneZ\tchrB\tchrB\t100\tFalse")
+
+            def sccmecOutputs = workflow.out.sccmec_override.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_sccmec = path(sccmecOutputs['sampleA']).text
+            def sampleB_sccmec = path(sccmecOutputs['sampleB']).text
+
+            // sampleA has no extracted SCCmec element at all -> no override for either gene
+            assert sampleA_sccmec.contains("geneX\tchrA\tchrA\tFalse")
+            assert sampleA_sccmec.contains("geneY\tplasA\tplasA\tFalse")
+            // sampleB: geneZ (200-300) sits inside the fixture's extracted cassette span (50-500)
+            assert sampleB_sccmec.contains("geneZ\tchrB\tchrB\tTrue\t50-500")
+
+            def tierOutputs = workflow.out.tier_resolution.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_tier = path(tierOutputs['sampleA']).text
+            def sampleB_tier = path(tierOutputs['sampleB']).text
+
+            // geneX: unanimous_chromosome, no override, above the floor -> Chromosomal
+            assert sampleA_tier.contains("Chromosomal")
+            // geneY: unanimous_plasmid + marker + circular -> High-confidence plasmid
+            assert sampleA_tier.contains("High-confidence plasmid")
+            // geneZ: this is the actual point of this assertion - chrB's classifier
+            // agreement alone (majority_chromosome) resolves to Ambiguous per
+            // bin/tier_resolution.py's documented judgement call, but the SCCmec
+            // override takes precedence over that and forces Chromosomal instead.
+            assert sampleB_tier.contains("Chromosomal")
+            assert !sampleB_tier.contains("Ambiguous")
         }
     }
 }
