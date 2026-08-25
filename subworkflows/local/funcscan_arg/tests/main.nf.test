@@ -1,0 +1,69 @@
+nextflow_workflow {
+
+    name "Test Subworkflow ARG"
+    script "../main.nf"
+    workflow "ARG"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/funcscan_arg"
+    tag "amrfinderplus"
+    tag "abricate"
+    tag "fargene"
+
+    test("Synthetic blaTEM contig - AMRFinderPlus + ABRicate + fARGene (RGI, DeepARG skipped)") {
+
+        when {
+            params {
+                outdir                  = "$outputDir"
+                // RGI needs to build/query the CARD database and DeepARG needs a
+                // large ML model download - both too heavy for this sandbox, so
+                // this test only exercises AMRFinderPlus, ABRicate and fARGene.
+                arg_skip_rgi             = true
+                arg_skip_deeparg         = true
+                // Restrict fARGene to the one HMM class relevant to the fixture
+                // (a class A beta-lactamase) to keep the test fast.
+                arg_fargene_hmmmodel     = 'class_a'
+                // NOTE: deviation - argnorm has drifted from the 0.5.0 pinned by
+                // upstream funcscan 4.0.0 to 0.8.0 in this repo's already-installed
+                // modules/nf-core/argnorm (same class of module drift as the
+                // topic-channel version-reporting change elsewhere in this repo).
+                // argnorm 0.8.0's abricate normalizer expects raw ABRicate report
+                // columns (e.g. an uppercase `PRODUCT` column) but ARG's own
+                // ARGNORM_ABRICATE call feeds it HAMRONIZATION_ABRICATE's output,
+                // which uses hAMRonization's standardised (lowercase, renamed)
+                // schema that has no `PRODUCT` column - this is faithfully copied
+                // from upstream funcscan 4.0.0's arg.nf and not something this
+                // vendoring task changed. That mismatch makes argnorm fail with
+                // `KeyError: 'PRODUCT'` regardless of input data. Since this test
+                // only needs to exercise AMRFinderPlus + ABRicate + fARGene,
+                // argnorm is disabled here via its own dedicated flag.
+                arg_skip_argnorm         = true
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id: 'test_contig' ], // meta map
+                        file("\${projectDir}/subworkflows/local/funcscan_arg/tests/data/test_contig.fasta", checkIfExists: true)
+                    ]
+                )
+                // NOTE: arg_skip_deeparg = true, so, matching how nf-core/funcscan's own
+                // workflows/funcscan.nf calls ARG() in the arg_skip_deeparg branch, the
+                // protein-annotation (faa) input is never consulted - pass an empty-list
+                // placeholder here.
+                input[1] = []
+                // NOTE: taxonomic classification is never used in plastier, matching how
+                // funcscan.nf builds `ch_taxonomy_tsv = channel.empty()` when
+                // !params.run_taxa_classification - replicate the same empty placeholder here.
+                input[2] = Channel.empty()
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+    }
+}

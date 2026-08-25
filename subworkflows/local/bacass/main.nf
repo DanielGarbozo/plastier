@@ -972,7 +972,6 @@ workflow BACASS {
     assembly       = ch_assembly                        // channel: [ val(meta), path(assembly) ]
     multiqc_report = CUSTOM_MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                        // channel: [ path(versions.yml) ]
-    assembly       = ch_assembly                        // channel: [ meta, path(fasta) ]
     annotation_faa = ch_annotation_faa                  // channel: [ meta, path(faa) ]
     annotation_gff = ch_annotation_gff                  // channel: [ meta, path(gff) ]
 
