@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::blast
+  - pip
+  - pip:
+      - sccmecextractor==1.6.0
