@@ -11,6 +11,8 @@ include { methodsDescriptionText    } from '../subworkflows/local/utils_nfcore_p
 include { validateInputSamplesheet  } from '../subworkflows/local/utils_nfcore_plastier_pipeline'
 include { FETCHNGS                  } from '../subworkflows/local/fetchngs/main'
 include { BACASS                    } from '../subworkflows/local/bacass/main'
+include { SPATYPER                  } from '../modules/nf-core/spatyper/main'
+include { STAPHOPIASCCMEC           } from '../modules/nf-core/staphopiasccmec/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,6 +79,22 @@ workflow PLASTIER {
     //
     BACASS ( ch_bacass_input )
     ch_versions = ch_versions.mix(BACASS.out.versions)
+
+    //
+    // STAGE 6: spa typing, specific to S. aureus (spaTyper)
+    //
+    SPATYPER (
+        BACASS.out.assembly,
+        [],
+        []
+    )
+    ch_versions = ch_versions.mix(SPATYPER.out.versions)
+
+    //
+    // STAGE 6: SCCmec cassette typing
+    //
+    STAPHOPIASCCMEC ( BACASS.out.assembly )
+    ch_versions = ch_versions.mix(STAPHOPIASCCMEC.out.versions)
 
     //
     // Collate and save software versions
