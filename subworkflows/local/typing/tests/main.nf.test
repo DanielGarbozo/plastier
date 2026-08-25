@@ -11,8 +11,9 @@ nextflow_workflow {
     tag "mlst"
     tag "spatyper"
     tag "staphopiasccmec"
+    tag "sccmecextractor"
 
-    test("Real bacterial assembly - MLST + spaTyper + staphopia-sccmec all run") {
+    test("Real bacterial assembly - MLST + spaTyper + staphopia-sccmec + SCCmecExtractor all run") {
 
         when {
             workflow {
@@ -30,13 +31,15 @@ nextflow_workflow {
         then {
             // Smoke test only, matching mlst/spatyper/staphopiasccmec's own module-level
             // tests: this fixture is not S. aureus, so spa/SCCmec calls are expected to
-            // come back untypable rather than assert a specific type - the point here is
-            // that the three tools wire together and each produce a TSV without erroring.
+            // come back untypable/unextracted rather than assert a specific type - the
+            // point here is that the four tools wire together and each produce a report
+            // without erroring.
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.mlst_tsv.size() == 1 },
                 { assert workflow.out.spa_tsv.size() == 1 },
-                { assert workflow.out.sccmec_tsv.size() == 1 }
+                { assert workflow.out.sccmec_tsv.size() == 1 },
+                { assert workflow.out.sccmecextractor_report.size() == 1 }
             )
         }
     }
