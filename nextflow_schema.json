@@ -879,6 +879,25 @@
                     "description": "Skip argNorm during ARG screening."
                 }
             }
+        },
+        "plasmid_platon": {
+            "title": "Plasmid classification: Platon",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Identification and characterization of bacterial plasmid contigs in short-read draft assemblies. More info: https://github.com/oschwengers/platon",
+            "properties": {
+                "plasmid_skip_platon": {
+                    "type": "boolean",
+                    "description": "Skip Platon during plasmid classification.",
+                    "fa_icon": "fas fa-ban"
+                },
+                "plasmid_platon_db": {
+                    "type": "string",
+                    "fa_icon": "fas fa-layer-group",
+                    "help_text": "Specify the path to a local, already-extracted copy of the Platon database.\n\nIf no input is given, the pipeline downloads and extracts it from Zenodo (https://zenodo.org/record/4066768/files/db.tar.gz, ~2.8 GB unzipped) for you.",
+                    "description": "Specify the path to a local version of the Platon database."
+                }
+            }
         }
     },
     "allOf": [
@@ -935,6 +954,9 @@
         },
         {
             "$ref": "#/$defs/arg_argnorm"
+        },
+        {
+            "$ref": "#/$defs/plasmid_platon"
         }
     ]
 }

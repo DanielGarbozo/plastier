@@ -10,9 +10,19 @@ nextflow_workflow {
     tag "subworkflows/plasmid_classification"
     tag "mobsuite"
 
-    test("Real bacterial assembly - MOB-suite recon runs and reports per-contig classification") {
+    test("Real bacterial assembly - MOB-suite recon runs and reports per-contig classification (Platon skipped)") {
 
         when {
+            params {
+                outdir = "$outputDir"
+                // Platon needs a ~2.8 GB database download (Zenodo) before it can
+                // run at all - too heavy for this sandbox/CI, same reasoning as
+                // arg_skip_rgi/arg_skip_deeparg in subworkflows/local/funcscan_arg's
+                // own test. Covered instead by code review and (once written) the
+                // pipeline-level -profile test run with a pre-supplied
+                // --plasmid_platon_db.
+                plasmid_skip_platon = true
+            }
             workflow {
                 """
                 input[0] = Channel.of(
@@ -32,7 +42,8 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert workflow.out.mobsuite_contig_report.size() == 1 },
-                { assert workflow.out.mobsuite_chromosome.size() == 1 }
+                { assert workflow.out.mobsuite_chromosome.size() == 1 },
+                { assert workflow.out.platon_tsv.size() == 0 }
             )
         }
     }
