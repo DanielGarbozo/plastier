@@ -1,0 +1,3 @@
+sample_id	molecule_type	contig_id
+sampleA	chromosome	chrA
+sampleA	plasmid	plasA

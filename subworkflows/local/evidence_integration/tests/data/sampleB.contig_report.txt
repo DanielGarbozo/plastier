@@ -1,0 +1,2 @@
+sample_id	molecule_type	contig_id
+sampleB	chromosome	chrB

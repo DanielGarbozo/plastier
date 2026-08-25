@@ -1,0 +1,4 @@
+input_file_name	input_sequence_id	gene_symbol
+sampleA	chrA	geneX
+sampleA	plasA	geneY
+sampleB	chrB	geneZ
