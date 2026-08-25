@@ -10,18 +10,24 @@ nextflow_workflow {
     tag "subworkflows/plasmid_classification"
     tag "mobsuite"
 
-    test("Real bacterial assembly - MOB-suite recon runs and reports per-contig classification (Platon skipped)") {
+    test("Real bacterial assembly - MOB-suite recon runs and reports per-contig classification (Platon and RFPlasmid skipped)") {
 
         when {
             params {
                 outdir = "$outputDir"
-                // Platon needs a ~2.8 GB database download (Zenodo) before it can
-                // run at all - too heavy for this sandbox/CI, same reasoning as
+                // Platon needs a ~2.8 GB database download (Zenodo), and RFPlasmid
+                // needs ~645 MB of protein FASTA turned into DIAMOND databases -
+                // both too heavy for this sandbox/CI, same reasoning as
                 // arg_skip_rgi/arg_skip_deeparg in subworkflows/local/funcscan_arg's
-                // own test. Covered instead by code review and (once written) the
-                // pipeline-level -profile test run with a pre-supplied
-                // --plasmid_platon_db.
-                plasmid_skip_platon = true
+                // own test. Both were verified for real once during development
+                // (RFPlasmid: full download + DB build + prediction, ~18 min,
+                // confirmed the containerOptions "-u root" fix in
+                // modules/local/rfplasmid/main.nf was actually needed and works) -
+                // covered going forward by code review and the pipeline-level
+                // -profile test run with pre-supplied --plasmid_platon_db /
+                // --plasmid_rfplasmid_db.
+                plasmid_skip_platon    = true
+                plasmid_skip_rfplasmid = true
             }
             workflow {
                 """
@@ -43,7 +49,8 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.mobsuite_contig_report.size() == 1 },
                 { assert workflow.out.mobsuite_chromosome.size() == 1 },
-                { assert workflow.out.platon_tsv.size() == 0 }
+                { assert workflow.out.platon_tsv.size() == 0 },
+                { assert workflow.out.rfplasmid_prediction.size() == 0 }
             )
         }
     }

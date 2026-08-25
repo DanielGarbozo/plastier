@@ -898,6 +898,32 @@
                     "description": "Specify the path to a local version of the Platon database."
                 }
             }
+        },
+        "plasmid_rfplasmid": {
+            "title": "Plasmid classification: RFPlasmid",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Random-forest prediction of plasmid contigs from assemblies using single-copy marker genes, plasmid genes, and k-mers. More info: https://github.com/aldertzomer/RFPlasmid",
+            "properties": {
+                "plasmid_skip_rfplasmid": {
+                    "type": "boolean",
+                    "description": "Skip RFPlasmid during plasmid classification.",
+                    "fa_icon": "fas fa-ban"
+                },
+                "plasmid_rfplasmid_db": {
+                    "type": "string",
+                    "fa_icon": "fas fa-layer-group",
+                    "help_text": "Specify the path to a directory containing already-built plasmiddb_cge.dmnd and plasmiddb_total.dmnd DIAMOND databases.\n\nIf no input is given, the pipeline downloads the source protein FASTAs from https://klif.uu.nl/download/plasmid_db/ (~645 MB) and builds them for you.",
+                    "description": "Specify the path to a local directory of pre-built RFPlasmid DIAMOND databases."
+                },
+                "plasmid_rfplasmid_species": {
+                    "type": "string",
+                    "default": "Staphylococcus",
+                    "fa_icon": "fas fa-bacterium",
+                    "help_text": "RFPlasmid ships a trained model per genus (run `rfplasmid --specieslist` for the full list, e.g. Staphylococcus, Enterococcus, Pseudomonas, Enterobacteriaceae) plus a taxon-agnostic 'Generic' model. Defaults to Staphylococcus, matching this pipeline's current case study - override for other species.\n\n> Modifies tool parameter(s):\n> - RFPlasmid: `--species`",
+                    "description": "Genus-level model to use for RFPlasmid's prediction."
+                }
+            }
         }
     },
     "allOf": [
@@ -957,6 +983,9 @@
         },
         {
             "$ref": "#/$defs/plasmid_platon"
+        },
+        {
+            "$ref": "#/$defs/plasmid_rfplasmid"
         }
     ]
 }
