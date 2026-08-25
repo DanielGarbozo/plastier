@@ -11,8 +11,8 @@ include { methodsDescriptionText    } from '../subworkflows/local/utils_nfcore_p
 include { validateInputSamplesheet  } from '../subworkflows/local/utils_nfcore_plastier_pipeline'
 include { FETCHNGS                  } from '../subworkflows/local/fetchngs/main'
 include { BACASS                    } from '../subworkflows/local/bacass/main'
-include { SPATYPER                  } from '../modules/nf-core/spatyper/main'
-include { STAPHOPIASCCMEC           } from '../modules/nf-core/staphopiasccmec/main'
+include { ARG                       } from '../subworkflows/local/funcscan_arg/main'
+include { TYPING                    } from '../subworkflows/local/typing/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,20 +81,31 @@ workflow PLASTIER {
     ch_versions = ch_versions.mix(BACASS.out.versions)
 
     //
-    // STAGE 6: spa typing, specific to S. aureus (spaTyper)
+    // STAGE 3: ARG (antimicrobial resistance gene) screening via nf-core/funcscan
     //
-    SPATYPER (
+    // Feeds directly off BACASS's own assembly + prokka annotation - no re-annotation.
+    // Taxonomic classification is never used in plastier, so tsvs is always empty,
+    // matching how funcscan's own workflow builds an empty ch_taxonomy_tsv placeholder
+    // when run_taxa_classification is off.
+    //
+    ARG (
         BACASS.out.assembly,
-        [],
-        []
+        BACASS.out.annotation_faa,
+        channel.empty(),
     )
-    ch_versions = ch_versions.mix(SPATYPER.out.versions)
+    ch_versions = ch_versions.mix(ARG.out.versions)
 
     //
-    // STAGE 6: SCCmec cassette typing
+    // STAGE 6: strain typing via MLST, spa typing, and SCCmec typing
     //
-    STAPHOPIASCCMEC ( BACASS.out.assembly )
-    ch_versions = ch_versions.mix(STAPHOPIASCCMEC.out.versions)
+    // Separates horizontal transfer from clonal expansion (CLAUDE.md stage 6).
+    // A typed SCCmec cassette is also stage 5's (evidence integration, not yet
+    // built) route to resolving the chromosomal tier: SCCmec carries its own
+    // integrase/mobility genes, so a naive plasmid classifier can mistake an
+    // ARG sitting inside it for mobile signal when it's actually chromosomal.
+    //
+    TYPING ( BACASS.out.assembly )
+    ch_versions = ch_versions.mix(TYPING.out.versions)
 
     //
     // Collate and save software versions

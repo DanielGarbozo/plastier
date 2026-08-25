@@ -1,0 +1,60 @@
+{
+    "hamronization/rgi - haemophilus_influenzae - genome - fna.gz - stub": {
+        "content": [
+            {
+                "json": [
+                    
+                ],
+                "tsv": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_hamronization": [
+                    [
+                        "HAMRONIZATION_RGI",
+                        "hamronization",
+                        "1.1.9"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-12T17:37:03.564588123",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "hamronization/rgi - haemophilus_influenzae - genome - fna.gz": {
+        "content": [
+            {
+                "json": [
+                    
+                ],
+                "tsv": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.tsv:md5,fda542e7a38cb5c36d3c2912aebeae16"
+                    ]
+                ],
+                "versions_hamronization": [
+                    [
+                        "HAMRONIZATION_RGI",
+                        "hamronization",
+                        "1.1.9"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-12T17:36:23.428320453",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    }
+}

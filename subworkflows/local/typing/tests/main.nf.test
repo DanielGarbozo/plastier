@@ -1,0 +1,43 @@
+nextflow_workflow {
+
+    name "Test Subworkflow TYPING"
+    script "../main.nf"
+    workflow "TYPING"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/typing"
+    tag "mlst"
+    tag "spatyper"
+    tag "staphopiasccmec"
+
+    test("Real bacterial assembly - MLST + spaTyper + staphopia-sccmec all run") {
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id: 'test' ], // meta map
+                        file(params.modules_testdata_base_path + 'genomics/prokaryotes/bacteroides_fragilis/genome/genome.fna.gz', checkIfExists: true)
+                    ]
+                )
+                """
+            }
+        }
+
+        then {
+            // Smoke test only, matching mlst/spatyper/staphopiasccmec's own module-level
+            // tests: this fixture is not S. aureus, so spa/SCCmec calls are expected to
+            // come back untypable rather than assert a specific type - the point here is
+            // that the three tools wire together and each produce a TSV without erroring.
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.mlst_tsv.size() == 1 },
+                { assert workflow.out.spa_tsv.size() == 1 },
+                { assert workflow.out.sccmec_tsv.size() == 1 }
+            )
+        }
+    }
+}
