@@ -190,6 +190,11 @@
                         "git_sha": "ddeeb1c3b5090dc65cce55ff1a69e87f26c053f1",
                         "installed_by": ["modules"]
                     },
+                    "mobsuite/recon": {
+                        "branch": "master",
+                        "git_sha": "95868cc6a5a108bda21f045e95f5fb1aa2258ede",
+                        "installed_by": ["modules"]
+                    },
                     "multiqc": {
                         "branch": "master",
                         "git_sha": "98403d15b0e50edae1f3fec5eae5e24982f1fade",
