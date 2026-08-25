@@ -5,6 +5,26 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "abricate/run": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "amrfinderplus/run": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "amrfinderplus/update": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "argnorm": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
                     "autocycler/cluster": {
                         "branch": "master",
                         "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
@@ -65,9 +85,24 @@
                         "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
                         "installed_by": ["fastq_download_prefetch_fasterqdump_sratools"]
                     },
+                    "deeparg/downloaddata": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "deeparg/predict": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
                     "dragonflye": {
                         "branch": "master",
                         "git_sha": "cb9bd80e4b96968b16bd523b62f4aa459b486183",
+                        "installed_by": ["modules"]
+                    },
+                    "fargene": {
+                        "branch": "master",
+                        "git_sha": "cf9a1194bad4637860563db271ddb54c015731f4",
                         "installed_by": ["modules"]
                     },
                     "fastp": {
@@ -95,6 +130,36 @@
                         "git_sha": "0902eac3012baaf4f9ab6513c8c55acc9353c96c",
                         "installed_by": ["modules"]
                     },
+                    "hamronization/abricate": {
+                        "branch": "master",
+                        "git_sha": "56f42bcdc5030d479f9a694355e5ed7fb64d4c5f",
+                        "installed_by": ["modules"]
+                    },
+                    "hamronization/amrfinderplus": {
+                        "branch": "master",
+                        "git_sha": "56f42bcdc5030d479f9a694355e5ed7fb64d4c5f",
+                        "installed_by": ["modules"]
+                    },
+                    "hamronization/deeparg": {
+                        "branch": "master",
+                        "git_sha": "56f42bcdc5030d479f9a694355e5ed7fb64d4c5f",
+                        "installed_by": ["modules"]
+                    },
+                    "hamronization/fargene": {
+                        "branch": "master",
+                        "git_sha": "56f42bcdc5030d479f9a694355e5ed7fb64d4c5f",
+                        "installed_by": ["modules"]
+                    },
+                    "hamronization/rgi": {
+                        "branch": "master",
+                        "git_sha": "56f42bcdc5030d479f9a694355e5ed7fb64d4c5f",
+                        "installed_by": ["modules"]
+                    },
+                    "hamronization/summarize": {
+                        "branch": "master",
+                        "git_sha": "56f42bcdc5030d479f9a694355e5ed7fb64d4c5f",
+                        "installed_by": ["modules"]
+                    },
                     "kraken2/kraken2": {
                         "branch": "master",
                         "git_sha": "d67d33d5925fcec4691b499670fa2bd926fd2be5",
@@ -118,6 +183,11 @@
                     "minimap2/align": {
                         "branch": "master",
                         "git_sha": "135d883a43b1a2324b4112cd270cf22e20835533",
+                        "installed_by": ["modules"]
+                    },
+                    "mlst": {
+                        "branch": "master",
+                        "git_sha": "ddeeb1c3b5090dc65cce55ff1a69e87f26c053f1",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
@@ -160,6 +230,16 @@
                         "git_sha": "7f2af264386af99e70dc68ced1a46ee759f5756b",
                         "installed_by": ["modules"]
                     },
+                    "rgi/cardannotation": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "rgi/main": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
                     "samtools/index": {
                         "branch": "master",
                         "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
@@ -188,6 +268,11 @@
                     "staphopiasccmec": {
                         "branch": "master",
                         "git_sha": "5dc290ef79087675ab377b5cdc299ae845e87f55",
+                        "installed_by": ["modules"]
+                    },
+                    "tabix/bgzip": {
+                        "branch": "master",
+                        "git_sha": "54e41f4ed3aead45054380a9befeb927612ffc91",
                         "installed_by": ["modules"]
                     },
                     "toulligqc": {

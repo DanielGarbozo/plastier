@@ -828,6 +828,11 @@ workflow BACASS {
     // MODULE: PROKKA, gene annotation
     //
     ch_prokka_txt_multiqc = channel.empty()
+    // Scoped to the prokka path (this project's default, annotation_tool='prokka') for stage 3
+    // (ARG screening) to consume without re-annotating. bakta/dfast/liftoff paths are not wired
+    // to these yet - extend if annotation_tool is ever switched away from prokka.
+    ch_annotation_faa = channel.empty()
+    ch_annotation_gff = channel.empty()
     if ( !params.skip_annotation && params.annotation_tool == 'prokka' ) {
         // Uncompress assembly for annotation if necessary
         GUNZIP ( ch_assembly_for_gunzip.gzip )
@@ -839,6 +844,8 @@ workflow BACASS {
             []
         )
         ch_prokka_txt_multiqc   = PROKKA.out.txt.map{ _meta, prokka_txt -> [ prokka_txt ]}
+        ch_annotation_faa       = PROKKA.out.faa
+        ch_annotation_gff       = PROKKA.out.gff
     }
 
     //
@@ -965,6 +972,9 @@ workflow BACASS {
     assembly       = ch_assembly                        // channel: [ val(meta), path(assembly) ]
     multiqc_report = CUSTOM_MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                        // channel: [ path(versions.yml) ]
+    assembly       = ch_assembly                        // channel: [ meta, path(fasta) ]
+    annotation_faa = ch_annotation_faa                  // channel: [ meta, path(faa) ]
+    annotation_gff = ch_annotation_gff                  // channel: [ meta, path(gff) ]
 
 }
 
