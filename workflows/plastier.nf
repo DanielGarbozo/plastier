@@ -110,14 +110,16 @@ workflow PLASTIER {
     // STAGE 5: evidence integration - resolve ARG calls into the four-tier
     // confidence framework (see CLAUDE.md and issue #23)
     //
-    // Classifier-agreement (#24) and replicon/mobility-marker (#25) signals
-    // are wired so far. #26-#29 (circularisation/coverage, contig-length
-    // floor, SCCmec override, and the tier-resolution rule engine itself)
-    // are not yet built - subworkflows/local/evidence_integration/main.nf
-    // has the up-to-date status.
+    // Classifier-agreement (#24), replicon/mobility-marker (#25), and
+    // circularisation/coverage-ratio (#26) signals are wired so far. #27-#29
+    // (contig-length floor, SCCmec override, and the tier-resolution rule
+    // engine itself) are not yet built -
+    // subworkflows/local/evidence_integration/main.nf has the up-to-date
+    // status.
     //
     EVIDENCE_INTEGRATION (
         ARG.out.report,
+        BACASS.out.assembly,
         PLASMID_CLASSIFICATION.out.mobsuite_contig_report,
         PLASMID_CLASSIFICATION.out.platon_tsv,
         PLASMID_CLASSIFICATION.out.rfplasmid_prediction,

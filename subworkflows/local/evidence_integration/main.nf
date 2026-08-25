@@ -5,7 +5,7 @@
     Built incrementally, one signal per sub-issue:
     - #24 classifier-agreement signal: DONE (CLASSIFIER_AGREEMENT below)
     - #25 replicon/mobility marker evidence: DONE (MOBILITY_MARKERS below)
-    - #26 circularisation/coverage-ratio evidence: not yet wired
+    - #26 circularisation/coverage-ratio evidence: DONE (CIRCULARITY_COVERAGE below)
     - #27 validated contig-length floor: not yet wired
     - #28 SCCmec-cassette override: not yet wired
     - #29 tier-resolution rule engine (combines all of the above): not yet wired
@@ -28,12 +28,14 @@
     profile always sets plasmid_skip_platon = true).
 */
 
-include { CLASSIFIER_AGREEMENT } from '../../../modules/local/classifier_agreement/main'
-include { MOBILITY_MARKERS     } from '../../../modules/local/mobility_markers/main'
+include { CLASSIFIER_AGREEMENT  } from '../../../modules/local/classifier_agreement/main'
+include { MOBILITY_MARKERS      } from '../../../modules/local/mobility_markers/main'
+include { CIRCULARITY_COVERAGE  } from '../../../modules/local/circularity_coverage/main'
 
 workflow EVIDENCE_INTEGRATION {
     take:
     arg_report             // path: hamronization_combined_report.tsv (all samples, stage 3)
+    assembly                // channel: [ val(meta), path(fasta) ], possibly gzipped (stage 2, BACASS.out.assembly)
     mobsuite_contig_report // channel: [ val(meta), path(contig_report.txt) ] (stage 4)
     platon_tsv             // channel: [ val(meta), path(*.tsv) ] - empty channel if --plasmid_skip_platon
     rfplasmid_prediction   // channel: [ val(meta), path(prediction.csv) ] (stage 4)
@@ -52,8 +54,12 @@ workflow EVIDENCE_INTEGRATION {
     MOBILITY_MARKERS ( mobsuite_contig_report, arg_report.first() )
     ch_versions = ch_versions.mix(MOBILITY_MARKERS.out.versions)
 
+    CIRCULARITY_COVERAGE ( assembly, arg_report.first() )
+    ch_versions = ch_versions.mix(CIRCULARITY_COVERAGE.out.versions)
+
     emit:
-    classifier_agreement = CLASSIFIER_AGREEMENT.out.tsv // channel: [ val(meta), path(*.classifier_agreement.tsv) ] - feeds stage 5f (#29)
-    mobility_markers      = MOBILITY_MARKERS.out.tsv    // channel: [ val(meta), path(*.mobility_markers.tsv) ] - feeds stage 5f (#29)
+    classifier_agreement = CLASSIFIER_AGREEMENT.out.tsv  // channel: [ val(meta), path(*.classifier_agreement.tsv) ] - feeds stage 5f (#29)
+    mobility_markers      = MOBILITY_MARKERS.out.tsv     // channel: [ val(meta), path(*.mobility_markers.tsv) ] - feeds stage 5f (#29)
+    circularity_coverage  = CIRCULARITY_COVERAGE.out.tsv // channel: [ val(meta), path(*.circularity_coverage.tsv) ] - feeds stage 5f (#29)
     versions              = ch_versions
 }

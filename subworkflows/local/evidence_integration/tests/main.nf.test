@@ -18,14 +18,18 @@ nextflow_workflow {
 
                 input[0] = Channel.value(file("\${dataDir}/hamronization_combined_report.tsv", checkIfExists: true))
                 input[1] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.fasta", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.fasta", checkIfExists: true) ]
+                )
+                input[2] = Channel.of(
                     [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.contig_report.txt", checkIfExists: true) ],
                     [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.contig_report.txt", checkIfExists: true) ]
                 )
-                input[2] = Channel.of(
+                input[3] = Channel.of(
                     [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.platon.tsv", checkIfExists: true) ],
                     [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.platon.tsv", checkIfExists: true) ]
                 )
-                input[3] = Channel.of(
+                input[4] = Channel.of(
                     [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.prediction.csv", checkIfExists: true) ],
                     [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.prediction.csv", checkIfExists: true) ]
                 )
@@ -70,6 +74,17 @@ nextflow_workflow {
             assert sampleA_markers.contains("geneX\tchrA\tchrA\t-\t-\t-\tFalse")
             assert sampleA_markers.contains("geneY\tplasA\tplasA\trep_cluster_1234\t-\tMobilizable\tTrue")
             assert sampleB_markers.contains("geneZ\tchrB\tchrB\t-\t-\t-\tFalse")
+
+            def covOutputs = workflow.out.circularity_coverage.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_cov = path(covOutputs['sampleA']).text
+            def sampleB_cov = path(covOutputs['sampleB']).text
+
+            // chrA: depth=1.00x, not circular -> below the 1.5x default threshold, no high-confidence evidence
+            assert sampleA_cov.contains("geneX\tchrA\tchrA\tFalse\t1.0\tFalse\tFalse")
+            // plasA: depth=3.00x AND circular=true -> both conditions of the OR are true
+            assert sampleA_cov.contains("geneY\tplasA\tplasA\tTrue\t3.0\tTrue\tTrue")
+            // chrB: depth=0.98x, not circular -> no high-confidence evidence
+            assert sampleB_cov.contains("geneZ\tchrB\tchrB\tFalse\t0.98\tFalse\tFalse")
         }
     }
 }

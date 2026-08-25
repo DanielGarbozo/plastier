@@ -924,6 +924,21 @@
                     "description": "Genus-level model to use for RFPlasmid's prediction."
                 }
             }
+        },
+        "evidence_integration": {
+            "title": "Evidence integration (stage 5)",
+            "type": "object",
+            "fa_icon": "fas fa-balance-scale",
+            "description": "Parameters for the local evidence-integration subworkflow that resolves ARG calls into the four-tier confidence framework (see CLAUDE.md).",
+            "properties": {
+                "plasmid_coverage_ratio_threshold": {
+                    "type": "number",
+                    "default": 1.5,
+                    "fa_icon": "fas fa-chart-line",
+                    "help_text": "Minimum assembly-relative depth (Unicycler's own depth=X.XXx header, already normalised to the assembly's median contig depth) for a contig to count as plasmid-like multi-copy coverage rather than baseline chromosomal depth, feeding the High-confidence plasmid tier's coverage-ratio condition. See docs/decisions.md (2026-08-25 entry) for why 1.5 was chosen as a placeholder default, not a calibrated one.",
+                    "description": "Minimum depth ratio (relative to assembly median) to count as plasmid-like coverage."
+                }
+            }
         }
     },
     "allOf": [
@@ -986,6 +1001,9 @@
         },
         {
             "$ref": "#/$defs/plasmid_rfplasmid"
+        },
+        {
+            "$ref": "#/$defs/evidence_integration"
         }
     ]
 }
