@@ -13,6 +13,7 @@ include { FETCHNGS                  } from '../subworkflows/local/fetchngs/main'
 include { BACASS                    } from '../subworkflows/local/bacass/main'
 include { ARG                       } from '../subworkflows/local/funcscan_arg/main'
 include { PLASMID_CLASSIFICATION    } from '../subworkflows/local/plasmid_classification/main'
+include { EVIDENCE_INTEGRATION      } from '../subworkflows/local/evidence_integration/main'
 include { TYPING                    } from '../subworkflows/local/typing/main'
 
 /*
@@ -106,6 +107,24 @@ workflow PLASTIER {
     //
     PLASMID_CLASSIFICATION ( BACASS.out.assembly )
     ch_versions = ch_versions.mix(PLASMID_CLASSIFICATION.out.versions)
+
+    //
+    // STAGE 5: evidence integration - resolve ARG calls into the four-tier
+    // confidence framework (see CLAUDE.md and issue #23)
+    //
+    // Only the classifier-agreement signal (#24) is wired so far. #25-#29
+    // (replicon/mobility markers, circularisation/coverage, contig-length
+    // floor, SCCmec override, and the tier-resolution rule engine itself)
+    // are not yet built - subworkflows/local/evidence_integration/main.nf
+    // has the up-to-date status.
+    //
+    EVIDENCE_INTEGRATION (
+        ARG.out.report,
+        PLASMID_CLASSIFICATION.out.mobsuite_contig_report,
+        PLASMID_CLASSIFICATION.out.platon_tsv,
+        PLASMID_CLASSIFICATION.out.rfplasmid_prediction,
+    )
+    ch_versions = ch_versions.mix(EVIDENCE_INTEGRATION.out.versions)
 
     //
     // STAGE 6: strain typing via MLST, spa typing, and SCCmec typing
