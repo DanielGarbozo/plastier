@@ -1,0 +1,39 @@
+nextflow_workflow {
+
+    name "Test Subworkflow PLASMID_CLASSIFICATION"
+    script "../main.nf"
+    workflow "PLASMID_CLASSIFICATION"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/plasmid_classification"
+    tag "mobsuite"
+
+    test("Real bacterial assembly - MOB-suite recon runs and reports per-contig classification") {
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id: 'test' ], // meta map
+                        file(params.modules_testdata_base_path + 'genomics/prokaryotes/bacteroides_fragilis/genome/genome.fna.gz', checkIfExists: true)
+                    ]
+                )
+                """
+            }
+        }
+
+        then {
+            // Smoke test: this fixture has no known plasmids, so the point here
+            // is that mob_recon runs end to end (including decompressing the
+            // gzipped input) and emits a contig_report - not a specific call.
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.mobsuite_contig_report.size() == 1 },
+                { assert workflow.out.mobsuite_chromosome.size() == 1 }
+            )
+        }
+    }
+}
