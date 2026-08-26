@@ -46,7 +46,7 @@ def check_plsdb(acc):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", required=True)
-    parser.add_argument("-o", "--output", default="table_summary.csv")
+    parser.add_argument("-o", "--output", default="closed_genome_ground_truth.csv")
     args = parser.parse_args()
 
     with open(args.input) as f: accs = list(dict.fromkeys(f.read().split()))
