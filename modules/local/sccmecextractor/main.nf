@@ -54,9 +54,12 @@ process SCCMECEXTRACTOR {
         -t ${task.cpus} \\
         ${args}
 
+    # sccmec-pipeline has no --version flag (it prints its usage/help text
+    # instead, which broke versions.yml's YAML when captured directly) -
+    # hardcoded to match the pinned container tag, same as done for fARGene.
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        sccmecextractor: \$(sccmec-pipeline --version 2>&1 | sed 's/^.*sccmec-pipeline //' || echo "1.6.0")
+        sccmecextractor: "1.6.0"
     END_VERSIONS
     """
 }

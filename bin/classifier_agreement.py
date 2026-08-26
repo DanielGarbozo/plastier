@@ -22,8 +22,10 @@ Platon's TSV lists only the contigs it calls plasmid (confirmed from
 upstream's README, not yet exercised against a real run in this repo - its
 ~2.8 GB database makes that expensive, see subworkflows/local/
 plasmid_classification/main.nf) - so a contig absent from that file is an
-implicit chromosome call. Platon input is optional: pass --platon-tsv only
-when the run didn't skip it (--plasmid_skip_platon).
+implicit chromosome call. Platon and RFPlasmid inputs are both optional: pass
+--platon/--rfplasmid only when the run didn't skip them (--plasmid_skip_platon
+/ --plasmid_skip_rfplasmid) - agreement_level() below works over however many
+of the three classifiers actually ran, down to just MOB-suite alone.
 
 Sample scoping: ARG's hamronization report (subworkflows/local/funcscan_arg)
 is merged across every sample in the run in one shot (HAMRONIZATION_SUMMARIZE
@@ -67,8 +69,10 @@ def load_mobsuite(path: str) -> dict:
     return calls.to_dict()
 
 
-def load_rfplasmid(path: str) -> dict:
-    """contig_key -> 'plasmid' | 'chromosome'"""
+def load_rfplasmid(path: str | None) -> dict:
+    """contig_key -> 'plasmid' | 'chromosome', or {} if RFPlasmid was skipped."""
+    if not path:
+        return {}
     df = pd.read_csv(path, dtype=str)
     df["contig_key"] = df["contigID"].map(first_token)
     calls = df.set_index("contig_key")["prediction"].map(
@@ -117,7 +121,7 @@ def main():
     parser.add_argument("--hamronization", required=True, help="hAMRonization merged ARG report (tsv, all samples)")
     parser.add_argument("--sample-id", required=True, help="input_file_name value identifying this sample's rows")
     parser.add_argument("--mobsuite", required=True, help="MOB-suite contig_report.txt")
-    parser.add_argument("--rfplasmid", required=True, help="RFPlasmid prediction.csv")
+    parser.add_argument("--rfplasmid", default=None, help="RFPlasmid prediction.csv (omit if --plasmid_skip_rfplasmid was set)")
     parser.add_argument("--platon", default=None, help="Platon tsv (omit if --plasmid_skip_platon was set)")
     parser.add_argument("--output", required=True, help="Output tsv path")
     parser.add_argument("--version", action="version", version=f"classifier_agreement {__version__}")
