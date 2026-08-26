@@ -1,0 +1,4 @@
+input_file_name	input_sequence_id	gene_symbol	input_gene_start	input_gene_stop
+sampleA	chrA	geneX	10	100
+sampleA	plasA	geneY	5	35
+sampleB	chrB	geneZ	200	300

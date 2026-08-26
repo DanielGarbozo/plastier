@@ -879,6 +879,73 @@
                     "description": "Skip argNorm during ARG screening."
                 }
             }
+        },
+        "plasmid_platon": {
+            "title": "Plasmid classification: Platon",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Identification and characterization of bacterial plasmid contigs in short-read draft assemblies. More info: https://github.com/oschwengers/platon",
+            "properties": {
+                "plasmid_skip_platon": {
+                    "type": "boolean",
+                    "description": "Skip Platon during plasmid classification.",
+                    "fa_icon": "fas fa-ban"
+                },
+                "plasmid_platon_db": {
+                    "type": "string",
+                    "fa_icon": "fas fa-layer-group",
+                    "help_text": "Specify the path to a local, already-extracted copy of the Platon database.\n\nIf no input is given, the pipeline downloads and extracts it from Zenodo (https://zenodo.org/record/4066768/files/db.tar.gz, ~2.8 GB unzipped) for you.",
+                    "description": "Specify the path to a local version of the Platon database."
+                }
+            }
+        },
+        "plasmid_rfplasmid": {
+            "title": "Plasmid classification: RFPlasmid",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Random-forest prediction of plasmid contigs from assemblies using single-copy marker genes, plasmid genes, and k-mers. More info: https://github.com/aldertzomer/RFPlasmid",
+            "properties": {
+                "plasmid_skip_rfplasmid": {
+                    "type": "boolean",
+                    "description": "Skip RFPlasmid during plasmid classification.",
+                    "fa_icon": "fas fa-ban"
+                },
+                "plasmid_rfplasmid_db": {
+                    "type": "string",
+                    "fa_icon": "fas fa-layer-group",
+                    "help_text": "Specify the path to a directory containing already-built plasmiddb_cge.dmnd and plasmiddb_total.dmnd DIAMOND databases.\n\nIf no input is given, the pipeline downloads the source protein FASTAs from https://klif.uu.nl/download/plasmid_db/ (~645 MB) and builds them for you.",
+                    "description": "Specify the path to a local directory of pre-built RFPlasmid DIAMOND databases."
+                },
+                "plasmid_rfplasmid_species": {
+                    "type": "string",
+                    "default": "Staphylococcus",
+                    "fa_icon": "fas fa-bacterium",
+                    "help_text": "RFPlasmid ships a trained model per genus (run `rfplasmid --specieslist` for the full list, e.g. Staphylococcus, Enterococcus, Pseudomonas, Enterobacteriaceae) plus a taxon-agnostic 'Generic' model. Defaults to Staphylococcus, matching this pipeline's current case study - override for other species.\n\n> Modifies tool parameter(s):\n> - RFPlasmid: `--species`",
+                    "description": "Genus-level model to use for RFPlasmid's prediction."
+                }
+            }
+        },
+        "evidence_integration": {
+            "title": "Evidence integration (stage 5)",
+            "type": "object",
+            "fa_icon": "fas fa-balance-scale",
+            "description": "Parameters for the local evidence-integration subworkflow that resolves ARG calls into the four-tier confidence framework (see CLAUDE.md).",
+            "properties": {
+                "plasmid_coverage_ratio_threshold": {
+                    "type": "number",
+                    "default": 1.5,
+                    "fa_icon": "fas fa-chart-line",
+                    "help_text": "Minimum assembly-relative depth (Unicycler's own depth=X.XXx header, already normalised to the assembly's median contig depth) for a contig to count as plasmid-like multi-copy coverage rather than baseline chromosomal depth, feeding the High-confidence plasmid tier's coverage-ratio condition. See docs/decisions.md (2026-08-25 entry) for why 1.5 was chosen as a placeholder default, not a calibrated one.",
+                    "description": "Minimum depth ratio (relative to assembly median) to count as plasmid-like coverage."
+                },
+                "plasmid_min_contig_length": {
+                    "type": "integer",
+                    "default": 1000,
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "help_text": "Contigs shorter than this (bp) are excluded from transfer claims and routed to the Ambiguous tier, regardless of what the classifiers say - assembly fragmentation and misassembly make short-contig calls unreliable. Not yet calibrated against this pipeline's own validation data (stage 7, issue #22).",
+                    "description": "Minimum contig length (bp) for a plasmid/chromosome call to be trusted."
+                }
+            }
         }
     },
     "allOf": [
@@ -935,6 +1002,15 @@
         },
         {
             "$ref": "#/$defs/arg_argnorm"
+        },
+        {
+            "$ref": "#/$defs/plasmid_platon"
+        },
+        {
+            "$ref": "#/$defs/plasmid_rfplasmid"
+        },
+        {
+            "$ref": "#/$defs/evidence_integration"
         }
     ]
 }

@@ -1,0 +1,136 @@
+nextflow_workflow {
+
+    name "Test Subworkflow EVIDENCE_INTEGRATION"
+    script "../main.nf"
+    workflow "EVIDENCE_INTEGRATION"
+    config "./nextflow.config"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/evidence_integration"
+
+    test("Two samples, hand-crafted fixtures - classifier agreement resolves per contig, ARG report filtered per sample") {
+
+        when {
+            params {
+                // These fixture contigs are 40-100bp - far below the pipeline's real
+                // 1000bp default (--plasmid_min_contig_length). Lowered here so the
+                // length-floor signal doesn't swamp every other assertion in this
+                // test; contig_length_floor's own behaviour is exercised directly by
+                // its column values below, not by hitting the real-world default.
+                plasmid_min_contig_length = 30
+            }
+            workflow {
+                """
+                def dataDir = "\${projectDir}/subworkflows/local/evidence_integration/tests/data"
+
+                input[0] = Channel.value(file("\${dataDir}/hamronization_combined_report.tsv", checkIfExists: true))
+                input[1] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.fasta", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.fasta", checkIfExists: true) ]
+                )
+                input[2] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.contig_report.txt", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.contig_report.txt", checkIfExists: true) ]
+                )
+                input[3] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.platon.tsv", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.platon.tsv", checkIfExists: true) ]
+                )
+                input[4] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.prediction.csv", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.prediction.csv", checkIfExists: true) ]
+                )
+                input[5] = Channel.of(
+                    [ [ id: 'sampleA' ], file("\${dataDir}/sampleA.sccmec_unified_report.tsv", checkIfExists: true) ],
+                    [ [ id: 'sampleB' ], file("\${dataDir}/sampleB.sccmec_unified_report.tsv", checkIfExists: true) ]
+                )
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            def outputs = workflow.out.classifier_agreement.collectEntries { meta, path -> [(meta.id): path] }
+            assert outputs.size() == 2
+
+            def sampleA_tsv = path(outputs['sampleA']).text
+            def sampleB_tsv = path(outputs['sampleB']).text
+
+            // sampleA: chrA - all 3 classifiers say chromosome; plasA - all 3 say plasmid.
+            // Checking n_classifiers=3 explicitly (not just the agreement label) matters -
+            // "unanimous_*" is also what 2/2 classifiers agreeing looks like, so a bug that
+            // silently drops Platon from the join (this happened once - an earlier version
+            // of this subworkflow checked params.plasmid_skip_platon instead of reacting to
+            // its actual input channel, see main.nf) would pass a weaker assertion here.
+            assert sampleA_tsv.contains("geneX\tchrA\tchrA\tchromosome\tchromosome\tchromosome\t3\t0\t3\tunanimous_chromosome")
+            assert sampleA_tsv.contains("geneY\tplasA\tplasA\tplasmid\tplasmid\tplasmid\t3\t3\t0\tunanimous_plasmid")
+            // sampleB's ARG (geneZ) must NOT leak into sampleA's output - this is
+            // the actual point of the test: the merged, all-samples hamronization
+            // report gets correctly filtered per sample.
+            assert !sampleA_tsv.contains("geneZ")
+
+            // sampleB: chrB - mob_suite + platon say chromosome, rfplasmid says
+            // plasmid -> majority_chromosome (2 vs 1), all 3 classifiers counted.
+            assert sampleB_tsv.contains("geneZ\tchrB\tchrB\tchromosome\tchromosome\tplasmid\t3\t1\t2\tmajority_chromosome")
+            assert !sampleB_tsv.contains("geneX")
+            assert !sampleB_tsv.contains("geneY")
+
+            def markerOutputs = workflow.out.mobility_markers.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_markers = path(markerOutputs['sampleA']).text
+            def sampleB_markers = path(markerOutputs['sampleB']).text
+
+            // plasA has a replicon marker (rep_cluster_1234) -> has_marker True;
+            // chrA and chrB have neither rep_type nor relaxase_type -> False.
+            assert sampleA_markers.contains("geneX\tchrA\tchrA\t-\t-\t-\tFalse")
+            assert sampleA_markers.contains("geneY\tplasA\tplasA\trep_cluster_1234\t-\tMobilizable\tTrue")
+            assert sampleB_markers.contains("geneZ\tchrB\tchrB\t-\t-\t-\tFalse")
+
+            def covOutputs = workflow.out.circularity_coverage.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_cov = path(covOutputs['sampleA']).text
+            def sampleB_cov = path(covOutputs['sampleB']).text
+
+            // chrA: depth=1.00x, not circular -> below the 1.5x default threshold, no high-confidence evidence
+            assert sampleA_cov.contains("geneX\tchrA\tchrA\tFalse\t1.0\tFalse\tFalse")
+            // plasA: depth=3.00x AND circular=true -> both conditions of the OR are true
+            assert sampleA_cov.contains("geneY\tplasA\tplasA\tTrue\t3.0\tTrue\tTrue")
+            // chrB: depth=0.98x, not circular -> no high-confidence evidence
+            assert sampleB_cov.contains("geneZ\tchrB\tchrB\tFalse\t0.98\tFalse\tFalse")
+
+            def lengthOutputs = workflow.out.contig_length_floor.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_length = path(lengthOutputs['sampleA']).text
+            def sampleB_length = path(lengthOutputs['sampleB']).text
+
+            // all three fixture contigs clear the test's lowered 30bp floor (see params above)
+            assert sampleA_length.contains("geneX\tchrA\tchrA\t100\tFalse")
+            assert sampleA_length.contains("geneY\tplasA\tplasA\t40\tFalse")
+            assert sampleB_length.contains("geneZ\tchrB\tchrB\t100\tFalse")
+
+            def sccmecOutputs = workflow.out.sccmec_override.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_sccmec = path(sccmecOutputs['sampleA']).text
+            def sampleB_sccmec = path(sccmecOutputs['sampleB']).text
+
+            // sampleA has no extracted SCCmec element at all -> no override for either gene
+            assert sampleA_sccmec.contains("geneX\tchrA\tchrA\tFalse")
+            assert sampleA_sccmec.contains("geneY\tplasA\tplasA\tFalse")
+            // sampleB: geneZ (200-300) sits inside the fixture's extracted cassette span (50-500)
+            assert sampleB_sccmec.contains("geneZ\tchrB\tchrB\tTrue\t50-500")
+
+            def tierOutputs = workflow.out.tier_resolution.collectEntries { meta, path -> [(meta.id): path] }
+            def sampleA_tier = path(tierOutputs['sampleA']).text
+            def sampleB_tier = path(tierOutputs['sampleB']).text
+
+            // geneX: unanimous_chromosome, no override, above the floor -> Chromosomal
+            assert sampleA_tier.contains("Chromosomal")
+            // geneY: unanimous_plasmid + marker + circular -> High-confidence plasmid
+            assert sampleA_tier.contains("High-confidence plasmid")
+            // geneZ: this is the actual point of this assertion - chrB's classifier
+            // agreement alone (majority_chromosome) resolves to Ambiguous per
+            // bin/tier_resolution.py's documented judgement call, but the SCCmec
+            // override takes precedence over that and forces Chromosomal instead.
+            assert sampleB_tier.contains("Chromosomal")
+            assert !sampleB_tier.contains("Ambiguous")
+        }
+    }
+}

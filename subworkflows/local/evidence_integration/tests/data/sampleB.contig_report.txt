@@ -1,0 +1,2 @@
+sample_id	molecule_type	contig_id	rep_type(s)	relaxase_type(s)	predicted_mobility
+sampleB	chromosome	chrB	-	-	-

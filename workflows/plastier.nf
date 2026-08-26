@@ -12,6 +12,8 @@ include { validateInputSamplesheet  } from '../subworkflows/local/utils_nfcore_p
 include { FETCHNGS                  } from '../subworkflows/local/fetchngs/main'
 include { BACASS                    } from '../subworkflows/local/bacass/main'
 include { ARG                       } from '../subworkflows/local/funcscan_arg/main'
+include { PLASMID_CLASSIFICATION    } from '../subworkflows/local/plasmid_classification/main'
+include { EVIDENCE_INTEGRATION      } from '../subworkflows/local/evidence_integration/main'
 include { TYPING                    } from '../subworkflows/local/typing/main'
 
 /*
@@ -96,16 +98,45 @@ workflow PLASTIER {
     ch_versions = ch_versions.mix(ARG.out.versions)
 
     //
-    // STAGE 6: strain typing via MLST, spa typing, and SCCmec typing
+    // STAGE 4: plasmid classification via MOB-suite, Platon, and RFPlasmid
+    //
+    // Runs off the same assembly as everything else. All three classifiers are
+    // vendored (issues #8, #9, #10) - stage 4 is complete.
+    //
+    PLASMID_CLASSIFICATION ( BACASS.out.assembly )
+    ch_versions = ch_versions.mix(PLASMID_CLASSIFICATION.out.versions)
+
+    //
+    // STAGE 6: strain typing via MLST, spa typing, SCCmec typing, and SCCmec
+    // cassette extraction
     //
     // Separates horizontal transfer from clonal expansion (CLAUDE.md stage 6).
-    // A typed SCCmec cassette is also stage 5's (evidence integration, not yet
-    // built) route to resolving the chromosomal tier: SCCmec carries its own
-    // integrase/mobility genes, so a naive plasmid classifier can mistake an
-    // ARG sitting inside it for mobile signal when it's actually chromosomal.
+    // Run before stage 5 below (out of numeric order) because evidence
+    // integration's SCCmec-cassette override (#28) consumes
+    // TYPING.out.sccmecextractor_report directly - Nextflow only cares about
+    // the actual data dependency, not the stage numbering, but the channel
+    // has to be defined before it's referenced.
     //
     TYPING ( BACASS.out.assembly )
     ch_versions = ch_versions.mix(TYPING.out.versions)
+
+    //
+    // STAGE 5: evidence integration - resolve ARG calls into the four-tier
+    // confidence framework (see CLAUDE.md and issue #23)
+    //
+    // All six signals (#24-#29) are wired - stage 5 is complete. `tier` in
+    // EVIDENCE_INTEGRATION.out.tier_resolution is the final per-ARG call that
+    // stage 7 (#22, not yet built) will validate.
+    //
+    EVIDENCE_INTEGRATION (
+        ARG.out.report,
+        BACASS.out.assembly,
+        PLASMID_CLASSIFICATION.out.mobsuite_contig_report,
+        PLASMID_CLASSIFICATION.out.platon_tsv,
+        PLASMID_CLASSIFICATION.out.rfplasmid_prediction,
+        TYPING.out.sccmecextractor_report,
+    )
+    ch_versions = ch_versions.mix(EVIDENCE_INTEGRATION.out.versions)
 
     //
     // Collate and save software versions

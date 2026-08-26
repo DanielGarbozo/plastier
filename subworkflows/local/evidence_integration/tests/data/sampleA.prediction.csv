@@ -1,0 +1,3 @@
+"","prediction","votes chromosomal","votes plasmid","contigID"
+"1","c",0.9,0.1,"chrA"
+"2","p",0.1,0.9,"plasA"
