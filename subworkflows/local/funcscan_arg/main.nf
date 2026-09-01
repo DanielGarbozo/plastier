@@ -132,7 +132,7 @@ workflow ARG {
         if (!params.arg_rgi_db) {
 
             // Download and untar CARD
-            UNTAR_CARD([[], file('https://card.mcmaster.ca/latest/data', checkIfExists: true)])
+            UNTAR_CARD([[], file('assets/card.tar.bz2', checkIfExists: true)])
             // NOTE: deviation from upstream - modules/nf-core/untar emits software versions via
             // the `versions` topic instead of a classic `.out.versions` channel.
             rgi_db = UNTAR_CARD.out.untar.map { it[1] }

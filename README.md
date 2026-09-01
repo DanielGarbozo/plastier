@@ -38,9 +38,9 @@ Now, you can run the pipeline using:
 
 ```bash
 nextflow run plastier/plastier \
-   -profile conda \
+   -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
-   --outdir results
+   --outdir <OUTDIR>
 ```
 
 > [!WARNING]
