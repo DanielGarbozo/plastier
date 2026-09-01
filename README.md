@@ -11,9 +11,11 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/plastier/plastier)
 
-## Pipeline Summary
+## Introduction
 
-**plastier** is a comprehensive Nextflow pipeline that bridges the gap between antimicrobial resistance (AMR) detection and spatial genomic attribution. It processes raw sequencing data through five core stages:
+**plastier/plastier** is a bioinformatics pipeline that assigns every detected resistance gene to a plasmid or to the chromosome, states a confidence level for that assignment, and reports how accurate each confidence level actually is when tested against genomes where the answer is known. 
+
+It processes raw sequencing data through five core stages:
 
 1. **Data Retrieval (Stage 1):** Downloads raw short-reads from public databases via `nf-core/fetchngs` (optional).
 2. **Assembly & Annotation (Stage 2):** Performs *de novo* genome assembly and structural annotation using `nf-core/bacass` (Unicycler/SPAdes, Prokka).
@@ -21,7 +23,11 @@
 4. **Plasmid Classification & Typing (Stage 4):** Evaluates contig origin using multiple classifiers (Platon, MOB-suite, RFPlasmid) and performs strain typing (MLST, spaTyper, SCCmec).
 5. **Evidence Integration (Stage 5):** A custom rules engine (`tier_resolution.py`) evaluates the conflicting outputs of the classifiers and assigns a final 4-tier confidence level to every detected ARG (High-confidence plasmid, Moderate-confidence plasmid, Chromosomal, or Ambiguous).
 
+
 ## Usage
+
+> [!NOTE]
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
 
 First, prepare a samplesheet with your input data that looks as follows:
 
@@ -32,7 +38,8 @@ sample,fastq_1,fastq_2
 isolate_1,reads/isolate_1_R1.fastq.gz,reads/isolate_1_R2.fastq.gz
 isolate_2,reads/isolate_2_R1.fastq.gz,reads/isolate_2_R2.fastq.gz
 ```
-Each row represents a pair of fastq files (paired-end). Alternatively, if you are starting from public data, you can provide an SRA IDs file to automatically download the reads.
+
+Each row represents a pair of fastq files (paired-end). Alternatively, if you are starting from public data, you can provide an SRA IDs file (CSV with an `id` column) to automatically download the reads using the `fetchngs` module.
 
 Now, you can run the pipeline using:
 

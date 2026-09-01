@@ -6,16 +6,6 @@ This document describes the output produced by the pipeline. Most of the plots a
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-## Pipeline overview
-
-The pipeline is built using [Nextflow](https://www.nextflow.io/) and produces a structured `results/` directory containing the outputs of its five main stages:
-
-- [Assembly & Annotation](#assembly--annotation) - Contigs and genomic features (bacass)
-- [AMR Detection](#amr-detection) - Standardized resistance gene reports
-- [Plasmid Classification](#plasmid-classification) - Contig origin predictions
-- [Strain Typing](#strain-typing) - Epidemiological markers
-- [Tier Resolution (Final Output)](#tier-resolution-final-output) - The integrated plasmid attribution report
-
 ### Tier Resolution (Final Output)
 
 <details markdown="1">
@@ -62,6 +52,14 @@ Raw reads are assembled *de novo* using Unicycler or SPAdes. The resulting conti
   - `mlst/`, `spatyper/`, and SCC*mec* profiling reports characterizing the specific epidemiological lineage of the isolate.
 
 </details>
+
+## Pipeline overview
+
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
+
+- [FastQC](#fastqc) - Raw read QC
+- [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
+- [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
 ### FastQC
 
