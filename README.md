@@ -11,17 +11,17 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/plastier/plastier)
 
-## Introduction
+## Pipeline Summary
 
-**plastier/plastier** is a bioinformatics pipeline that assigns every detected resistance gene to a plasmid or to the chromosome, states a confidence level for that assignment, and reports how accurate each confidence level actually is when tested against genomes where the answer is known. 
+**plastier** is a comprehensive Nextflow pipeline that bridges the gap between antimicrobial resistance (AMR) detection and spatial genomic attribution. It processes raw sequencing data through five core stages:
+
+1. **Data Retrieval (Stage 1):** Downloads raw short-reads from public databases via `nf-core/fetchngs` (optional).
+2. **Assembly & Annotation (Stage 2):** Performs *de novo* genome assembly and structural annotation using `nf-core/bacass` (Unicycler/SPAdes, Prokka).
+3. **AMR Detection (Stage 3):** Scans the assemblies for resistance genes using an arsenal of tools via `funcscan` (AMRFinderPlus, FARGENE, RGI, DeepARG, Abricate) and standardizes them using hAMRonization.
+4. **Plasmid Classification & Typing (Stage 4):** Evaluates contig origin using multiple classifiers (Platon, MOB-suite, RFPlasmid) and performs strain typing (MLST, spaTyper, SCCmec).
+5. **Evidence Integration (Stage 5):** A custom rules engine (`tier_resolution.py`) evaluates the conflicting outputs of the classifiers and assigns a final 4-tier confidence level to every detected ARG (High-confidence plasmid, Moderate-confidence plasmid, Chromosomal, or Ambiguous).
 
 ## Usage
-
-> [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
-
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
 
 First, prepare a samplesheet with your input data that looks as follows:
 
@@ -29,22 +29,18 @@ First, prepare a samplesheet with your input data that looks as follows:
 
 ```csv
 sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+isolate_1,reads/isolate_1_R1.fastq.gz,reads/isolate_1_R2.fastq.gz
+isolate_2,reads/isolate_2_R1.fastq.gz,reads/isolate_2_R2.fastq.gz
 ```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
+Each row represents a pair of fastq files (paired-end). Alternatively, if you are starting from public data, you can provide an SRA IDs file to automatically download the reads.
 
 Now, you can run the pipeline using:
 
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
-
 ```bash
 nextflow run plastier/plastier \
-   -profile <docker/singularity/.../institute> \
+   -profile conda \
    --input samplesheet.csv \
-   --outdir <OUTDIR>
+   --outdir results
 ```
 
 > [!WARNING]

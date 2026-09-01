@@ -6,15 +6,62 @@ This document describes the output produced by the pipeline. Most of the plots a
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
-
 ## Pipeline overview
 
-The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and produces a structured `results/` directory containing the outputs of its five main stages:
 
-- [FastQC](#fastqc) - Raw read QC
-- [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
-- [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+- [Assembly & Annotation](#assembly--annotation) - Contigs and genomic features (bacass)
+- [AMR Detection](#amr-detection) - Standardized resistance gene reports
+- [Plasmid Classification](#plasmid-classification) - Contig origin predictions
+- [Strain Typing](#strain-typing) - Epidemiological markers
+- [Tier Resolution (Final Output)](#tier-resolution-final-output) - The integrated plasmid attribution report
+
+### Tier Resolution (Final Output)
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `tier_resolution/`
+  - `*_tier_resolution.tsv`: The final consolidated report for each sample.
+
+</details>
+
+This is the primary and most important output of the `plastier` pipeline. It integrates the findings from the AMR detection stage with the predictions from the plasmid classifiers. For every detected resistance gene, it outputs a strict classification mapping it to a 4-tier confidence scale: `High-confidence plasmid`, `Moderate-confidence plasmid`, `Chromosomal`, or `Ambiguous`.
+
+### Assembly & Annotation
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `bacass/`
+  - `assembly/`: Contains the final assembled contigs (`.fasta`).
+  - `annotation/`: Contains the Prokka structural annotations (`.gff`, `.faa`, `.gbk`).
+
+</details>
+
+Raw reads are assembled *de novo* using Unicycler or SPAdes. The resulting contigs are subsequently annotated by Prokka to identify coding sequences.
+
+### AMR Detection
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `funcscan/`
+  - `hamronization/`: A unified `.tsv` report containing all resistance genes detected across multiple tools (AMRFinderPlus, RGI, Abricate, DeepARG, FARGENE), standardized via hAMRonization.
+
+</details>
+
+### Plasmid Classification & Strain Typing
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `plasmid_classification/`
+  - Outputs from `platon/`, `mobsuite/`, and `rfplasmid/` evaluating the probability of each contig being plasmid-derived.
+- `typing/`
+  - `mlst/`, `spatyper/`, and SCC*mec* profiling reports characterizing the specific epidemiological lineage of the isolate.
+
+</details>
 
 ### FastQC
 
