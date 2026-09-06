@@ -1,0 +1,8 @@
+strain	replicon_accession	replicon_type	replicon_name	known_amr_genes	source_citation
+USA300_FPR3757	CP000255	chromosome	-	mecA (within SCCmec IV)	Diep et al. 2006, Lancet
+USA300_FPR3757	CP000256	plasmid	pUSA01	-	Diep et al. 2006, Lancet
+USA300_FPR3757	CP000257	plasmid	pUSA02	-	Diep et al. 2006, Lancet
+USA300_FPR3757	CP000258	plasmid	pUSA03	cadmium/antimicrobial resistance operon	Diep et al. 2006, Lancet
+N315	BA000018	chromosome	-	mecA (within SCCmec II)	Kuroda et al. 2001, Lancet
+N315	AP003139	plasmid	pN315	blaZ (beta-lactamase)	Kuroda et al. 2001, Lancet; NCBI NG_047533.1
+Mu50	BA000017.4	chromosome	-	mecA (within SCCmec II); VISA phenotype via chromosomal mutations, no resistance plasmid	Katayama et al. 2016, Antimicrob Agents Chemother (explicitly confirms Mu50 lacks the penicillinase plasmid present in N315)
