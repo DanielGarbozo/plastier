@@ -20,14 +20,21 @@
     sample's CLASSIFIER_AGREEMENT call, which filters to its own rows itself
     (see bin/classifier_agreement.py).
 
-    platon_tsv is joined with `remainder: true` rather than checked against
-    params.plasmid_skip_platon directly - this subworkflow should only care
-    whether it actually received Platon data on that channel, not re-derive
-    the same decision PLASMID_CLASSIFICATION already made. Keeps this testable
-    with hand-built channels regardless of global param state (an earlier
-    version checked the param here too and silently ignored fixture data
-    supplied straight to this subworkflow's own nf-test, since the `test`
-    profile always sets plasmid_skip_platon = true).
+    platon_tsv and rfplasmid_prediction are both joined with `remainder: true`
+    rather than checked against params.plasmid_skip_platon/plasmid_skip_rfplasmid
+    directly - this subworkflow should only care whether it actually received
+    each classifier's data on that channel, not re-derive the same decision
+    PLASMID_CLASSIFICATION already made. Keeps this testable with hand-built
+    channels regardless of global param state (an earlier version checked the
+    param here too and silently ignored fixture data supplied straight to this
+    subworkflow's own nf-test, since the `test` profile always sets
+    plasmid_skip_platon = true). rfplasmid_prediction originally used a plain
+    `.join()` here, which silently emptied ch_classifier_inputs - and therefore
+    CLASSIFIER_AGREEMENT and everything downstream of it, including
+    TIER_RESOLUTION - whenever RFPlasmid was skipped (e.g. the `test` profile,
+    which sets plasmid_skip_rfplasmid = true same as Platon). Found by actually
+    running -profile test,docker: the pipeline reported success with zero
+    tier calls produced. Fixed to match Platon's treatment.
 */
 
 include { CLASSIFIER_AGREEMENT  } from '../../../modules/local/classifier_agreement/main'
@@ -50,9 +57,9 @@ workflow EVIDENCE_INTEGRATION {
     ch_versions = channel.empty()
 
     ch_classifier_inputs = mobsuite_contig_report
-        .join(rfplasmid_prediction)
+        .join(rfplasmid_prediction, remainder: true)
         .join(platon_tsv, remainder: true)
-        .map { meta, mob, rfp, plat -> [meta, mob, rfp, plat ?: []] }
+        .map { meta, mob, rfp, plat -> [meta, mob, rfp ?: [], plat ?: []] }
 
     CLASSIFIER_AGREEMENT ( ch_classifier_inputs, arg_report.first() )
     ch_versions = ch_versions.mix(CLASSIFIER_AGREEMENT.out.versions)
