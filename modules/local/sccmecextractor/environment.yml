@@ -5,4 +5,4 @@ dependencies:
   - bioconda::blast
   - pip
   - pip:
-      - sccmecextractor==1.6.0
+      - sccmecextractor==1.5.0

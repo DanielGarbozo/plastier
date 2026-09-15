@@ -2,8 +2,18 @@
 // hand-written to match nf-core module conventions. pip-installable
 // (PyPI: sccmecextractor) with a pinned Docker image published by the tool's
 // own author (alisonmacfadyen/sccmecextractor) - verified a versioned tag
-// exists (v1.6.0, matching the current PyPI release) rather than depending
-// on :latest.
+// exists rather than depending on :latest.
+//
+// Pinned to v1.5.0, not the current v1.6.0 PyPI release: CI failed on
+// v1.6.0 with "sccmec-pipeline: command not found" (exit 127) inside the
+// container - the binary this module calls appears to be missing from that
+// specific tagged image. v1.5.0's own PyPI page explicitly documents
+// `sccmec-pipeline` as its Docker entry point, matching the invocation
+// below, so it was chosen as the newest tag confirmed (by the tool's own
+// docs, not by running it here - no Docker/Singularity registry access in
+// this environment) to actually expose that command. Re-check upstream
+// (https://github.com/AlisonMacFadyen/SCCmecExtractor) once a newer tag is
+// verified fixed. [See issue for the v1.6.0 failure and diagnosis.]
 //
 // Chosen over staphopia-sccmec (already in subworkflows/local/typing) for
 // stage 5e (issue #28) specifically because staphopia-sccmec only reports
@@ -26,8 +36,8 @@ process SCCMECEXTRACTOR {
     // image there (found by running the actual test, not by inspection).
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/alisonmacfadyen/sccmecextractor:v1.6.0' :
-        'docker.io/alisonmacfadyen/sccmecextractor:v1.6.0' }"
+        'docker://docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' :
+        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' }"
 
     input:
     tuple val(meta), path(fasta)
@@ -59,7 +69,7 @@ process SCCMECEXTRACTOR {
     # hardcoded to match the pinned container tag, same as done for fARGene.
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        sccmecextractor: "1.6.0"
+        sccmecextractor: "1.5.0"
     END_VERSIONS
     """
 }
