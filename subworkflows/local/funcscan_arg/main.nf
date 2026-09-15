@@ -22,6 +22,7 @@ include { AMRFINDERPLUS_RUN                } from '../../../modules/nf-core/amrf
 include { DEEPARG_DOWNLOADDATA             } from '../../../modules/nf-core/deeparg/downloaddata'
 include { DEEPARG_PREDICT                  } from '../../../modules/nf-core/deeparg/predict'
 include { FARGENE                          } from '../../../modules/nf-core/fargene'
+include { GUNZIP as ARG_FARGENE_GUNZIP     } from '../../../modules/nf-core/gunzip/main'
 include { RGI_CARDANNOTATION               } from '../../../modules/nf-core/rgi/cardannotation'
 include { RGI_MAIN                         } from '../../../modules/nf-core/rgi/main'
 include { UNTAR as UNTAR_CARD              } from '../../../modules/nf-core/untar'
@@ -87,7 +88,21 @@ workflow ARG {
     if (!params.arg_skip_fargene) {
         ch_fargene_classes = channel.fromList(params.arg_fargene_hmmmodel.tokenize(','))
 
-        ch_fargene_input = fastas
+        // Unlike AMRfinderplus/ABRicate/RGI, fARGene does not auto-decompress gzip input
+        // and exits with "input file(s) must be FASTA" when given one - same problem
+        // TYPING_GUNZIP already solves for the typing subworkflow, mirrored here.
+        fastas
+            .branch { _meta, fasta ->
+                gzip:     "${fasta}".endsWith('.gz')
+                not_gzip: true
+            }
+            .set { ch_fastas_for_fargene_gunzip }
+
+        ARG_FARGENE_GUNZIP ( ch_fastas_for_fargene_gunzip.gzip )
+
+        ch_fastas_uncompressed = ARG_FARGENE_GUNZIP.out.gunzip.mix(ch_fastas_for_fargene_gunzip.not_gzip)
+
+        ch_fargene_input = ch_fastas_uncompressed
             .combine(ch_fargene_classes)
             .map { meta, fastafiles, hmm_class ->
                 def meta_new = meta.clone()

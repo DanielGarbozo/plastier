@@ -31,12 +31,13 @@ process CLASSIFIER_AGREEMENT {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def platon_arg = platon_tsv ? "--platon ${platon_tsv}" : ''
+    def rfplasmid_arg = rfplasmid_prediction ? "--rfplasmid ${rfplasmid_prediction}" : ''
     """
     classifier_agreement.py \\
         --hamronization ${hamronization_tsv} \\
         --sample-id ${meta.id} \\
         --mobsuite ${mobsuite_contig_report} \\
-        --rfplasmid ${rfplasmid_prediction} \\
+        ${rfplasmid_arg} \\
         ${platon_arg} \\
         --output ${prefix}.classifier_agreement.tsv
 

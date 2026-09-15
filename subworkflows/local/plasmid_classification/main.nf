@@ -44,7 +44,7 @@ workflow PLASMID_CLASSIFICATION {
             ch_platon_db = file(params.plasmid_platon_db, checkIfExists: true)
         }
         else {
-            UNTAR_PLATON_DB ( [ [], file('https://zenodo.org/record/4066768/files/db.tar.gz', checkIfExists: true) ] )
+            UNTAR_PLATON_DB ( [ [], file('https://zenodo.org/records/4066768/files/db.tar.gz', checkIfExists: true) ] )
             ch_platon_db = UNTAR_PLATON_DB.out.untar.map { it[1] }
         }
 
