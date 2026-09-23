@@ -54,6 +54,10 @@ process SCCMECEXTRACTOR {
     def is_compressed = fasta.getName().endsWith(".gz") ? true : false
     def fasta_name = fasta.getName().replace(".gz", "")
     """
+    # Workaround for SCCmecExtractor container missing sccmec-pipeline in PATH
+    # because Nextflow bypasses the micromamba entrypoint (Issue #51).
+    export PATH="/opt/conda/bin:\$PATH"
+
     if [ "${is_compressed}" == "true" ]; then
         gzip -c -d ${fasta} > ${fasta_name}
     fi
