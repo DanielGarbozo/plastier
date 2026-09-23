@@ -35,9 +35,7 @@ process SCCMECEXTRACTOR {
     // prepends to any unqualified image name and 401s trying to resolve this
     // image there (found by running the actual test, not by inspection).
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' :
-        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' }"
+    container "docker.io/library/python:3.12-slim"
 
     input:
     tuple val(meta), path(fasta)
@@ -54,13 +52,14 @@ process SCCMECEXTRACTOR {
     def is_compressed = fasta.getName().endsWith(".gz") ? true : false
     def fasta_name = fasta.getName().replace(".gz", "")
     """
-    # Workaround for SCCmecExtractor container missing sccmec-pipeline in PATH
-    # because Nextflow bypasses the micromamba entrypoint (Issue #51).
-    export PATH="/opt/conda/bin:\$PATH"
-
     if [ "${is_compressed}" == "true" ]; then
         gzip -c -d ${fasta} > ${fasta_name}
     fi
+
+    # Install the package locally in the work directory (Singularity is read-only)
+    export PYTHONUSERBASE=\$PWD/.local
+    export PATH="\$PYTHONUSERBASE/bin:\$PATH"
+    pip install --user sccmecextractor==1.5.0
 
     sccmec-pipeline \\
         -f ${fasta_name} \\
