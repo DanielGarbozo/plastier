@@ -36,7 +36,7 @@ process SCCMECEXTRACTOR {
     // image there (found by running the actual test, not by inspection).
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' :
+        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' :
         'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' }"
 
     input:
