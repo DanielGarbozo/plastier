@@ -32,6 +32,16 @@
                     "description": "Path to a text file of public SRA/ENA/DDBJ/GEO accession IDs, one per line. When set, stage 1 (nf-core/fetchngs) retrieves the reads and feeds them into stage 2 (nf-core/bacass) in place of --input.",
                     "fa_icon": "fas fa-cloud-download-alt"
                 },
+                "assemblies": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to a CSV with columns 'sample' and 'fasta' listing finished genome assemblies (plain or gzipped FASTA; local paths or URLs). Skips stages 1-2 and annotates each FASTA with Prokka, keeping contig ids unchanged. Used for stage 7 validation against closed genomes.",
+                    "help_text": "Takes precedence over --sra_ids and --input. Contig ids in the FASTA are preserved all the way to the tier calls, which is what lets stage 7 match each ARG to a closed genome's replicon accession.",
+                    "fa_icon": "fas fa-dna"
+                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
