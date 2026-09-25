@@ -35,9 +35,7 @@ process SCCMECEXTRACTOR {
     // prepends to any unqualified image name and 401s trying to resolve this
     // image there (found by running the actual test, not by inspection).
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' :
-        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' }"
+    container "docker.io/alisonmacfadyen/sccmecextractor:v1.5.0"
 
     input:
     tuple val(meta), path(fasta)
@@ -58,7 +56,10 @@ process SCCMECEXTRACTOR {
         gzip -c -d ${fasta} > ${fasta_name}
     fi
 
-    sccmec-pipeline \\
+    # Issue #51 workaround: sccmec-pipeline is missing from the default PATH 
+    # because Nextflow bypasses the container's docker-entrypoint.sh.
+    # We must explicitly run it inside the 'base' micromamba environment.
+    micromamba run -n base sccmec-pipeline \\
         -f ${fasta_name} \\
         -o results \\
         -t ${task.cpus} \\
