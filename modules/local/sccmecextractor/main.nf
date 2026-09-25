@@ -29,11 +29,13 @@ process SCCMECEXTRACTOR {
     // No bioconda package exists for this tool, so unlike every other module
     // in this repo there is no galaxyproject-hosted singularity mirror to
     // point at - singularity/apptainer pull the same Docker Hub image
-    // directly instead (`docker://` prefix), same tag either way. Both
-    // branches spell out `docker.io/` explicitly - this repo's nextflow.config
-    // sets docker.registry = 'quay.io' as the default, which silently
-    // prepends to any unqualified image name and 401s trying to resolve this
-    // image there (found by running the actual test, not by inspection).
+    // directly instead. Nextflow adds the `docker://` scheme itself for
+    // singularity/apptainer, so it must not be written here (doubled prefix,
+    // issue #50). `docker.io/` is spelled out explicitly - this repo's
+    // nextflow.config sets docker.registry = 'quay.io' as the default, which
+    // silently prepends to any unqualified image name and 401s trying to
+    // resolve this image there (found by running the actual test, not by
+    // inspection).
     conda "${moduleDir}/environment.yml"
     container "docker.io/alisonmacfadyen/sccmecextractor:v1.5.0"
 
@@ -56,7 +58,7 @@ process SCCMECEXTRACTOR {
         gzip -c -d ${fasta} > ${fasta_name}
     fi
 
-    # Issue #51 workaround: sccmec-pipeline is missing from the default PATH 
+    # Issue #51 workaround: sccmec-pipeline is missing from the default PATH
     # because Nextflow bypasses the container's docker-entrypoint.sh.
     # We must explicitly run it inside the 'base' micromamba environment.
     micromamba run -n base sccmec-pipeline \\
