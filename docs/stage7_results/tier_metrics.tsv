@@ -1,0 +1,5 @@
+Tier	Total_Calls	Calls_True_Plasmid	Calls_True_Chromosome	TP	FP	FN	Precision	Recall	F1_Score
+High-confidence plasmid	14	14	0	14.0	0.0	1.0	1.0	0.9333	0.9655
+Moderate-confidence plasmid	1	1	0	1.0	0.0	14.0	1.0	0.0667	0.125
+Chromosomal	321	0	321	321.0	0.0	0.0	1.0	1.0	1.0
+Ambiguous	0	0	0						
