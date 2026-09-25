@@ -61,6 +61,11 @@ process SCCMECEXTRACTOR {
     # Issue #51 workaround: sccmec-pipeline is missing from the default PATH
     # because Nextflow bypasses the container's docker-entrypoint.sh.
     # We must explicitly run it inside the 'base' micromamba environment.
+    #
+    # Singularity/Apptainer runs with --no-home, so ~/.cache/mamba would sit in
+    # the container's read-only layer and micromamba dies with "Could not create
+    # proc dir ... Read-only file system". Point HOME at the writable task dir.
+    export HOME="\$PWD"
     micromamba run -n base sccmec-pipeline \\
         -f ${fasta_name} \\
         -o results \\
