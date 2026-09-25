@@ -10,6 +10,15 @@ for that genome must appear as a sequence id in the FASTA - stage 7 scores ARGs 
 exactly that id (bin/evaluate_metrics.py), so a mismatch here would silently
 corrupt the benchmark and is treated as an error.
 
+Headers are rewritten to Unicycler's style, ">ACCESSION length=N depth=1.00x circular=true",
+(sequences untouched, accession still the first token). Stage 5's circularity evidence
+(bin/circularity_coverage.py) reads exactly those fields, and an NCBI header has none of
+them, which would make the High-confidence plasmid tier unreachable in the benchmark.
+These are closed, complete genomes, so circular=true is a fact - and it is set on EVERY
+replicon, chromosome included, so it says nothing about which are plasmids. depth=1.00x
+everywhere means no coverage evidence is provided (a real plasmid's raised depth is what
+the simulated-read analysis, #35, varies). Pass --keep-ncbi-headers to skip the rewrite.
+
     python3 assets/validation/fetch_reference_genomes.py \\
         --outdir /scratch/$USER/plastier_refs --samplesheet refs.csv
 
@@ -20,6 +29,7 @@ import argparse
 import csv
 import gzip
 import io
+import re
 import sys
 import time
 import urllib.error
@@ -59,6 +69,27 @@ def download_fasta(acc):
             time.sleep(2 * attempt)
 
 
+
+def unicycler_headers(fasta_bytes):
+    """Rewrite each header to '>ACC length=N depth=1.00x circular=true'; idempotent."""
+    records, name, seq = [], None, []
+    for line in fasta_bytes.splitlines():
+        if line.startswith(b">"):
+            if name is not None:
+                records.append((name, seq))
+            name, seq = line[1:].split()[0], []
+        elif name is not None:
+            seq.append(line)
+    if name is not None:
+        records.append((name, seq))
+    out = []
+    for name, seq in records:
+        length = sum(len(part) for part in seq)
+        out.append(b">" + name + b" length=" + str(length).encode() + b" depth=1.00x circular=true")
+        out.extend(seq)
+    return b"\n".join(out) + b"\n"
+
+
 def sequence_ids(fasta_bytes):
     return {line[1:].split()[0].decode() for line in fasta_bytes.splitlines() if line.startswith(b">")}
 
@@ -69,6 +100,8 @@ def main():
     parser.add_argument("--outdir", required=True, type=Path, help="Directory for the <accession>.fna.gz files")
     parser.add_argument("--samplesheet", required=True, type=Path, help="Output csv for --assemblies")
     parser.add_argument("--only", nargs="+", help="Restrict to these genome accessions (for testing)")
+    parser.add_argument("--keep-ncbi-headers", action="store_true",
+                        help="Do not rewrite headers to Unicycler style (High-confidence tier then cannot occur)")
     args = parser.parse_args()
 
     plasmids = read_ground_truth(args.ground_truth)
@@ -95,9 +128,12 @@ def main():
         if missing:
             target.unlink(missing_ok=True)
             sys.exit(f"Error: {acc}: plasmid accession(s) {sorted(missing)} not among the FASTA's sequence ids {sorted(ids)}")
-        if status == "downloaded":
+        annotated = fasta if args.keep_ncbi_headers else unicycler_headers(fasta)
+        if status == "downloaded" or annotated != fasta:
             with gzip.open(target, "wb") as fh:
-                fh.write(fasta)
+                fh.write(annotated)
+            if status == "cached":
+                status = "cached, headers rewritten"
 
         print(f"[{i}/{len(genomes)}] {acc}: {status}, {len(ids)} replicons ({len(plasmids[acc])} plasmid)")
         rows.append((acc, str(target.resolve())))
