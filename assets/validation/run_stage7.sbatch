@@ -13,11 +13,13 @@
 #     PLASTIER_MODULES   `module load` line for Nextflow + Java + a python3 with pandas
 #                        (default: nextflow/26.04.0 openjdk/21.0.3 anaconda3/2025.06)
 #     PLASTIER_ONLY      space-separated genome accessions to run instead of all of them
+#     PLASTIER_MAX_TASK_TIME  longest walltime a pipeline task may request (default: 6.h, the
+#                        limit of NYU's cpu_short QOS; raise it on partitions that allow more)
 #
 # Re-submitting resumes (-resume): finished tasks and downloaded genomes are reused.
 
 #SBATCH --job-name=plastier-stage7
-#SBATCH --time=08:00:00
+#SBATCH --time=06:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --output=logs/stage7_%j.log
@@ -44,6 +46,7 @@ nextflow run . \
   --assemblies "${REFS}/assemblies.csv" \
   --slurm_account "${SLURM_JOB_ACCOUNT}" \
   --slurm_partition "${SLURM_JOB_PARTITION}" \
+  --slurm_max_time "${PLASTIER_MAX_TASK_TIME:-6.h}" \
   -work-dir "${SCRATCH}/plastier_work_stage7" \
   --outdir "${OUTDIR}" \
   -resume
