@@ -6,8 +6,8 @@ About 20 public *S. aureus* short-read runs for the Phase 3 discovery run (see
 per line, the format `workflows/plastier.nf` consumes); full ENA metadata is in
 [`assets/phase3/candidates_metadata.tsv`](../assets/phase3/candidates_metadata.tsv).
 
-**This does not edit `conf/full.config`.** As with the pilot (issue #21), the list needs a
-review before it is wired in. Until then it is passed explicitly with `--sra_ids`.
+**This does not set `sra_ids` in `conf/full.config`.** As with the pilot (issue #21), the list
+needs a review before it is wired in. Until then it is passed explicitly with `--sra_ids`.
 
 ## How they were chosen
 
