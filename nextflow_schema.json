@@ -219,7 +219,7 @@
                 },
                 "slurm_max_time": {
                     "type": "string",
-                    "pattern": "^\\d+(\\.\\d+)?\\s?(s|m|h|d|min|hour|day)s?$",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s?(ms|s|sec|m|min|h|hour|d|day)s?$",
                     "description": "Longest walltime any single task may request, e.g. '6.h'.",
                     "help_text": "Some partitions reject (rather than queue) a job asking for more than their walltime limit, and conf/base.config requests up to 8 h for process_medium and 16 h for process_high. Requests above this value are clamped down to it. Unset means no clamp.",
                     "fa_icon": "fas fa-hourglass-half"
