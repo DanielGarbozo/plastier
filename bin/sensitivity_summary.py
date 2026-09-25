@@ -36,7 +36,8 @@ import pandas as pd
 __version__ = "0.1.0"
 
 SUFFIX = ".tier_resolution.tsv"
-SAMPLE_RE = re.compile(r"^(?P<genome>.+)_d(?P<depth>\d+)_q(?P<shift>-?\d+)_p(?P<copies>\d+)$")
+# The pipeline appends the assembler to the sample id (e.g. "..._p1-unicycler"); tolerate it.
+SAMPLE_RE = re.compile(r"^(?P<genome>.+)_d(?P<depth>\d+)_q(?P<shift>-?\d+)_p(?P<copies>\d+)(?:-[A-Za-z0-9]+)?$")
 PLASMID_TIERS = {"High-confidence plasmid", "Moderate-confidence plasmid"}
 CHROMOSOMAL = "Chromosomal"
 AMBIGUOUS = "Ambiguous"
@@ -77,6 +78,12 @@ def classify(ref, sim):
 
 def ref_tier_label(ref):
     return next(iter(ref)) if len(ref) == 1 else "Mixed (gene in several tiers)"
+
+
+def condition_key(sample):
+    """Sample id without the assembler suffix, so it can be matched to the samplesheet ID."""
+    m = SAMPLE_RE.match(sample)
+    return f"{m['genome']}_d{m['depth']}_q{m['shift']}_p{m['copies']}" if m else sample
 
 
 def build(reference, simulated, sim_samples):
@@ -121,6 +128,7 @@ def main():
     parser = argparse.ArgumentParser(prog="sensitivity_summary", description="Diagnostic tier-stability summary (stage 7e).")
     parser.add_argument("--reference", required=True, nargs="+", type=Path, help="closed-genome *.tier_resolution.tsv files")
     parser.add_argument("--simulated", required=True, nargs="+", type=Path, help="simulated-read *.tier_resolution.tsv files")
+    parser.add_argument("--samplesheet", help="sim_samplesheet.csv; samples in it with no tier file count as every gene lost")
     parser.add_argument("--output", required=True, help="Summary TSV (per condition and reference tier)")
     parser.add_argument("--detail-output", help="Optional per-gene TSV")
     parser.add_argument("--version", action="version", version=f"sensitivity_summary {__version__}")
@@ -128,6 +136,15 @@ def main():
 
     reference, _ = tier_sets(args.reference)
     simulated, sim_samples = tier_sets(args.simulated)
+    if args.samplesheet:
+        # A sample whose assembly failed writes no tier file at all. It must still count
+        # (every gene lost), not vanish from the denominator.
+        present = {condition_key(s) for s in sim_samples}
+        expected = pd.read_csv(args.samplesheet, dtype=str)["ID"]
+        missing = [i for i in expected if i not in present]
+        sim_samples = sorted(sim_samples + missing)
+        if missing:
+            print(f"{len(missing)} sample(s) produced no output and count as every gene lost: {missing}")
     detail = build(reference, simulated, sim_samples)
     if detail.empty:
         sys.exit("Error: nothing to compare (no genes in the reference tier files)")

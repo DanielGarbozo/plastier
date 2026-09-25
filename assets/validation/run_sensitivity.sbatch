@@ -63,6 +63,7 @@ python3 assets/validation/simulate_reads.py \
 nextflow run . \
   -profile validation,singularity,slurm \
   -c assets/slurm/node_scratch_bind.config \
+  -c assets/validation/sensitivity.config \
   --input "${SIMDIR}/sim_samplesheet.csv" \
   --slurm_account "${SLURM_JOB_ACCOUNT}" \
   --slurm_partition "${SLURM_JOB_PARTITION}" \
@@ -77,6 +78,7 @@ for g in ${GENOMES}; do REFERENCE+=("${REFOUT}/tier/${g}.tier_resolution.tsv"); 
 python3 bin/sensitivity_summary.py \
   --reference "${REFERENCE[@]}" \
   --simulated "${SIMOUT}"/tier/*.tier_resolution.tsv \
+  --samplesheet "${SIMDIR}/sim_samplesheet.csv" \
   --output "${SIMOUT}/stage7/sensitivity_diagnostic.tsv" \
   --detail-output "${SIMOUT}/stage7/sensitivity_per_gene.tsv"
 echo "DIAGNOSTIC ONLY. Summary: ${SIMOUT}/stage7/sensitivity_diagnostic.tsv"

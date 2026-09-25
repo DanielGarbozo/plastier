@@ -78,3 +78,29 @@ def test_unrecognised_sample_name_is_rejected(tmp_path):
         capture_output=True, text=True,
     )
     assert proc.returncode != 0 and "not named" in proc.stderr
+
+
+def test_assembler_suffix_on_sample_id_is_accepted(tmp_path):
+    ref = tier_file(tmp_path / "GCF_1.1.tier_resolution.tsv", [("blaZ", HIGH)])
+    sim = tier_file(tmp_path / "GCF_1.1_d20_q0_p1-unicycler.tier_resolution.tsv", [("blaZ", HIGH)])
+    out = tmp_path / "o.tsv"
+    proc = subprocess.run([sys.executable, str(SCRIPT), "--reference", str(ref), "--simulated", str(sim), "--output", str(out)],
+                          capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
+    assert pd.read_csv(out, sep="\t").iloc[0].Same_Tier == 1
+
+
+def test_sample_with_no_tier_file_counts_as_every_gene_lost(tmp_path):
+    """An assembly that fails writes nothing; it must stay in the denominator."""
+    ref = tier_file(tmp_path / "GCF_1.1.tier_resolution.tsv", [("blaZ", HIGH), ("ermC", CHROM)])
+    ok = tier_file(tmp_path / "GCF_1.1_d50_q0_p1-unicycler.tier_resolution.tsv", [("blaZ", HIGH), ("ermC", CHROM)])
+    sheet = tmp_path / "sheet.csv"
+    sheet.write_text("ID,R1,R2\nGCF_1.1_d50_q0_p1,a,b\nGCF_1.1_d20_q-15_p1,a,b\n")  # second one never assembled
+    out, detail = tmp_path / "o.tsv", tmp_path / "d.tsv"
+    proc = subprocess.run([sys.executable, str(SCRIPT), "--reference", str(ref), "--simulated", str(ok), "--samplesheet", str(sheet),
+                           "--output", str(out), "--detail-output", str(detail)], capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
+    d = pd.read_csv(detail, sep="\t")
+    failed = d[d["Quality_Shift"] == -15]
+    assert len(failed) == 2 and set(failed.Outcome) == {"lost"}
+    assert set(d[d["Quality_Shift"] == 0].Outcome) == {"same"}
