@@ -112,10 +112,12 @@ def main():
                 "contig_key": contig_key,
                 "sccmec_override": sccmec_override,
                 "sccmec_element_span": element_span,
+                "input_gene_start": arg_row.get("input_gene_start"),
+                "input_gene_stop": arg_row.get("input_gene_stop"),
             }
         )
 
-    columns = ["gene_symbol", "input_sequence_id", "contig_key", "sccmec_override", "sccmec_element_span"]
+    columns = ["gene_symbol", "input_sequence_id", "contig_key", "sccmec_override", "sccmec_element_span", "input_gene_start", "input_gene_stop"]
     pd.DataFrame(rows, columns=columns).to_csv(args.output, sep="\t", index=False)
 
 

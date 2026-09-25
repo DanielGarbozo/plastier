@@ -85,6 +85,8 @@ def main():
                 "relaxase_type": marker.get("relaxase_type"),
                 "predicted_mobility": marker.get("predicted_mobility"),
                 "has_marker": marker.get("has_marker", False),
+                "input_gene_start": arg_row.get("input_gene_start"),
+                "input_gene_stop": arg_row.get("input_gene_stop"),
             }
         )
 
@@ -96,6 +98,8 @@ def main():
         "relaxase_type",
         "predicted_mobility",
         "has_marker",
+        "input_gene_start",
+        "input_gene_stop",
     ]
     pd.DataFrame(rows, columns=columns).to_csv(args.output, sep="\t", index=False)
 

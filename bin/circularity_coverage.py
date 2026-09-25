@@ -122,6 +122,8 @@ def main():
                 "coverage_ratio": coverage_ratio,
                 "coverage_matches_plasmid": coverage_matches_plasmid,
                 "high_confidence_evidence": info["circular"] or coverage_matches_plasmid,
+                "input_gene_start": arg_row.get("input_gene_start"),
+                "input_gene_stop": arg_row.get("input_gene_stop"),
             }
         )
 
@@ -133,6 +135,8 @@ def main():
         "coverage_ratio",
         "coverage_matches_plasmid",
         "high_confidence_evidence",
+        "input_gene_start",
+        "input_gene_stop",
     ]
     pd.DataFrame(rows, columns=columns).to_csv(args.output, sep="\t", index=False)
 
