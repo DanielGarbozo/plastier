@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Stage 7 validation: fetch the closed reference genomes, run stages 3-6 on them on
-# Slurm, then score the tier calls against the ground truth (issue #32).
+# Slurm, then score the results (assets/validation/score_stage7.sh: #32, #33, #34).
 #
 # Submit from the repository root, passing your cluster's account/partition:
 #
@@ -51,11 +51,4 @@ nextflow run . \
   --outdir "${OUTDIR}" \
   -resume
 
-mkdir -p "${OUTDIR}/stage7"
-python3 bin/evaluate_metrics.py \
-  --predictions "${OUTDIR}"/tier/*.tier_resolution.tsv \
-  --ground-truth assets/validation/closed_genome_ground_truth.csv \
-  --output "${OUTDIR}/stage7/tier_metrics.tsv" \
-  --per-arg-output "${OUTDIR}/stage7/per_arg.tsv"
-
-echo "Per-tier metrics: ${OUTDIR}/stage7/tier_metrics.tsv"
+assets/validation/score_stage7.sh "${OUTDIR}"
