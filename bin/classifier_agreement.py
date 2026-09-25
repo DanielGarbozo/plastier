@@ -160,6 +160,8 @@ def main():
                 "n_plasmid_votes": calls.count("plasmid"),
                 "n_chromosome_votes": calls.count("chromosome"),
                 "agreement": agreement_level(calls),
+                "input_gene_start": arg_row.get("input_gene_start"),
+                "input_gene_stop": arg_row.get("input_gene_stop"),
             }
         )
 
@@ -181,6 +183,8 @@ def main():
         "n_plasmid_votes",
         "n_chromosome_votes",
         "agreement",
+        "input_gene_start",
+        "input_gene_stop",
     ]
     pd.DataFrame(rows, columns=columns).to_csv(args.output, sep="\t", index=False)
 

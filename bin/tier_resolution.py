@@ -75,12 +75,19 @@ import pandas as pd
 
 __version__ = "0.1.0"
 
-JOIN_KEYS = ["gene_symbol", "input_sequence_id"]
+# One ARG *hit* is identified by gene, contig AND position. Joining on gene + contig
+# alone conflates repeated copies of a gene on one contig (e.g. a transposon present
+# both inside and outside an SCCmec cassette): the merge below then multiplies every
+# such hit by the number of copies in each of the five signal tables (2 copies ->
+# 2**5 = 32 rows) and pairs one copy's SCCmec verdict with the other copy's.
+JOIN_KEYS = ["gene_symbol", "input_sequence_id", "input_gene_start", "input_gene_stop"]
 
 
 def load(path: str, columns: list) -> pd.DataFrame:
     df = pd.read_csv(path, sep="\t", dtype=str)
-    return df[JOIN_KEYS + columns]
+    # Each signal is a function of the hit, so rows sharing a key are duplicates
+    # (typically the same locus reported by several ARG tools) and collapse to one.
+    return df[JOIN_KEYS + columns].drop_duplicates(JOIN_KEYS)
 
 
 def to_bool(series: pd.Series) -> pd.Series:
