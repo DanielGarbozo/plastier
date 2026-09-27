@@ -66,4 +66,44 @@ nextflow_workflow {
             assert workflow.success
         }
     }
+
+    // Regression: fARGene runs once per HMM class on the same sample, and every class
+    // used to give HAMRONIZATION_FARGENE the same output name (<id>_fargene.tsv), which
+    // made HAMRONIZATION_SUMMARIZE fail with "input file name collision" in real runs
+    // (default has 10 classes). The single-class test above cannot see this. Stub run:
+    // the fARGene stub always emits a retrieved-*.out per class, so no HMM search or
+    // container is needed.
+    test("Two fARGene classes on one sample - hAMRonization outputs must not collide (stub)") {
+
+        options "-stub-run"
+
+        when {
+            params {
+                outdir                  = "$outputDir"
+                arg_skip_rgi             = true
+                arg_skip_deeparg         = true
+                arg_skip_argnorm         = true
+                // Only fARGene + hAMRonization are under test here.
+                arg_skip_amrfinderplus   = true
+                arg_skip_abricate        = true
+                arg_fargene_hmmmodel     = 'class_a,class_b_1_2'
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id: 'test_contig' ],
+                        file("\${projectDir}/subworkflows/local/funcscan_arg/tests/data/test_contig.fasta", checkIfExists: true)
+                    ]
+                )
+                input[1] = []
+                input[2] = Channel.empty()
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+    }
 }
