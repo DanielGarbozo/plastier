@@ -31,17 +31,29 @@ distinct from `CHANGELOG.md`, which tracks released pipeline versions.
   sensitivity analysis (stage 7).
 - **Status:** Approved 2026-09-25.
   - Stage 6 typing: implemented.
-  - Stage 7: ground-truth set (#31) done; per-tier metrics script (#32) and
-    PlasEval converter (#33) exist but are not yet wired into the pipeline
-    or run against real output. #34, #35 and #36 not started.
+  - Stage 7 run 2026-09-27 on 25 closed genomes (#31-#36, PR #72): per-tier
+    precision/recall/F1 (#32), single-tool baseline (#34) and PlasEval
+    bin-level comparison (#33) all done and documented in
+    `docs/stage7_validation.md`. Every method scores at or near 1.0 - the
+    benchmark is at ceiling (only 15 plasmid hits, 8 genomes) and cannot show
+    the tier framework beats a single tool; the doc says so explicitly. The
+    simulated-read sensitivity analysis (#35, diagnostic only) found the
+    plasmid tier is unstable when the simulated plasmid has no coverage
+    advantage over the chromosome, one false plasmid call at 10x depth, and
+    outright assembly failure at the harshest quality setting tested.
 
-## Phase 3 — Scale-up (not started)
+## Phase 3 — Scale-up (in progress)
 
 - **Scope:** Move beyond the 10-genome pilot to a discovery run of about 20
   *S. aureus* genomes, executed on the Slurm cluster (`-profile slurm`).
-- **Status:** Approved in principle 2026-09-25 for ~20 genomes. The accession
-  list still has to be curated and reviewed, and `conf/full.config` stays a
-  stub until then.
+- **Status:** Approved in principle 2026-09-25 for ~20 genomes. Candidates
+  selected (`docs/phase3_candidates.md`) and a full run completed 2026-09-27
+  (PR #72); per-sample ST/*spa*/SCCmec/ARG-tier results are in
+  `docs/phase3_results.md` for review before `conf/full.config`'s `sra_ids`
+  is set (still unset - fails closed). One sample has no MLST ST and needs a
+  closer look; SCCmecExtractor only resolved the physical SCCmec cassette in
+  2/20 samples (fragmented drafts split the *att* sites across contigs), so
+  the stage 5e SCCmec-override path got little exercise on this cohort.
 
 ## Out of scope until explicitly requested
 
@@ -55,3 +67,6 @@ distinct from `CHANGELOG.md`, which tracks released pipeline versions.
 - 2026-09-25: Dropped the Phase 0 budget cap; brought phase statuses in line
   with the code (stages 4–6 implemented); Phases 1–3 approved to proceed,
   Phase 3 at ~20 genomes on Slurm.
+- 2026-09-27: Stage 7 validation run and Phase 3 scale-up run both completed
+  (PR #72); results and open review questions recorded in
+  `docs/stage7_validation.md` and `docs/phase3_results.md`.
