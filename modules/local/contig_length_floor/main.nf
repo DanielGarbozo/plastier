@@ -38,4 +38,16 @@ process CONTIG_LENGTH_FLOOR {
         pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.contig_length_floor.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        contig_length_floor: \$(contig_length_floor.py --version | sed 's/contig_length_floor //g')
+        pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
+    END_VERSIONS
+    """
 }
