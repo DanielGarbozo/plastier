@@ -120,6 +120,49 @@ Plasmid copy number is an assumption of the simulation (p1 = same depth as the c
 stage 5's coverage evidence is absent; p3 = a plausible multi-copy plasmid). **This is never an
 accuracy figure**; it shows how much depth and quality move the calls.
 
+### Result
+
+5 genomes x 5 conditions = 25 simulated samples. **The 5 samples at d20/q-15 (quality shift -15,
+the harshest condition tested) all failed assembly**: Unicycler's SPAdes step errored with
+"invalid kmer coverage histogram" on every one of them. `bin/sensitivity_summary.py` counts a
+failed assembly as every gene of that genome lost (0% recovered), which is the correct
+diagnostic outcome, not a scoring artifact - but it means the d20/q-15 row below reflects
+assembly failure, not tier miscalls.
+
+| Depth | Quality shift | Plasmid copies | Reference tier | Genes | Recovered | Same tier (of recovered) |
+|---|---|---|---|---|---|---|
+| 10 | 0 | 1 | Chromosomal | 52 | 90.4% | 66.0% |
+| 10 | 0 | 1 | High-confidence plasmid | 9 | 88.9% | 0.0% |
+| 20 | -15 | 1 | Chromosomal | 52 | **0.0%** | - |
+| 20 | -15 | 1 | High-confidence plasmid | 9 | **0.0%** | - |
+| 20 | 0 | 1 | Chromosomal | 52 | 100.0% | 69.2% |
+| 20 | 0 | 1 | High-confidence plasmid | 9 | 88.9% | 12.5% |
+| 20 | 0 | 3 | Chromosomal | 52 | 100.0% | 63.5% |
+| 20 | 0 | 3 | High-confidence plasmid | 9 | 88.9% | 50.0% |
+| 50 | 0 | 1 | Chromosomal | 52 | 98.1% | 64.7% |
+| 50 | 0 | 1 | High-confidence plasmid | 9 | 100.0% | 0.0% |
+
+(the "Mixed" reference-tier rows and full per-gene detail are in
+[`stage7_results/sensitivity_diagnostic.tsv`](stage7_results/sensitivity_diagnostic.tsv) /
+[`stage7_results/sensitivity_per_gene.tsv`](stage7_results/sensitivity_per_gene.tsv), not
+reproduced here.)
+
+- **Assembly can fail outright at low depth + degraded quality** (above), which the framework
+  correctly reports as zero recovery rather than a wrong tier.
+- **Recovery (called at all) is otherwise high** (88-100%) down to 10x depth. Most genes not
+  recovered move to Ambiguous rather than disappearing silently.
+- **The plasmid tier is unstable under single-copy assumptions.** With p1 (plasmid at the same
+  depth as the chromosome, so no coverage-ratio evidence), High-confidence plasmid calls are
+  recovered but rarely keep the *same* tier (0-12.5%) - they mostly drop to Moderate-confidence
+  plasmid or Ambiguous, because the coverage evidence stage 5 relies on for High is absent by
+  construction of the simulation. With p3 (a plausible multi-copy plasmid), same-tier stability
+  is much better (50%), consistent with the coverage ratio doing its job.
+- **One false plasmid call.** At the lowest depth tested (10x), the chromosomal mecA/mecI/mecR1
+  operon in one genome (GCF_026625305.1) flipped from Chromosomal to Moderate-confidence plasmid
+  (`Flipped_Class` = 3 in the d10/Chromosomal row) - the most serious kind of error the framework
+  can make, a false plasmid call on chromosomal genes, seen once out of 315 gene x condition
+  comparisons. It did not recur at 20x or 50x depth for the same genome/genes.
+
 ## Reproducing
 
 ```bash

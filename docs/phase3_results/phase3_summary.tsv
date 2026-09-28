@@ -1,0 +1,21 @@
+sample	species_mlst	ST	spa_type	sccmec_type	sccmec_cassette_resolved	sccmec_cassette_fail_reason	n_arg	high	moderate	ambiguous	chromosomal
+DRR456378	saureus	15	t084	-	False	no_ccr	5	3	0	0	2
+DRR484144	saureus	380	t12889	IV+IVc	False	cross_contig	7	0	3	1	3
+DRR484283	saureus	5	t002	II+IIa	False	cross_contig	12	3	0	6	3
+ERR7434454	saureus	398	t011	V+VII	False	cross_contig	7	0	1	1	5
+SRR12333138	saureus	97	t267	mecA only	False	cross_contig	8	4	0	2	2
+SRR13450679	saureus	1	t398	-	False	no_ccr	1	0	0	0	1
+SRR14267647	saureus	5	t002	mecA only	True		10	4	0	0	6
+SRR14862042	saureus	5	t002	IV+IVc	False	cross_contig	10	0	0	7	3
+SRR18339536	saureus	944	04-34-17-23-24-24-17	IIa	True		4	0	0	0	4
+SRR2057031	saureus	93	t202	IV+IVa	False	cross_contig	5	3	0	0	2
+SRR21098763	saureus	1	t127	-	False	no_ccr	4	3	0	0	1
+SRR23309788	saureus	59	t216	-	False	no_ccr	5	1	0	0	4
+SRR26374374	saureus	1	t127	-	False	no_ccr	5	4	0	0	1
+SRR27322154	saureus	30	t012	-	False	no_ccr	6	0	0	1	5
+SRR29758699	saureus	97	t267	-	False	no_ccr	4	0	0	0	4
+SRR36881360	saureus	5	t002	II+IIa	False	cross_contig	13	3	0	2	8
+SRR3731507	saureus	1207	t1778	-	False	no_ccr	6	3	0	0	3
+SRR6332104	saureus	1	t127	-	False	no_ccr	4	3	0	0	1
+SRR6347285	saureus	-	t878	-	False	no_ccr	4	3	0	0	1
+SRR7867492	saureus	239	t030	III+V+VII+IIIa	False	cross_contig	11	0	0	2	9

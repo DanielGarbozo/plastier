@@ -1,0 +1,316 @@
+genome	sample	Depth	Quality_Shift	Plasmid_Copies	gene_symbol	Reference_Tier	Reference_Tiers	Simulated_Tiers	Outcome
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d10_q0_p1-unicycler	10	0	1	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	ant(9)-Ia	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	aph(2'')-Ih	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	blaI_of_Z	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	blaPC1	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	blaR1	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	fosB-Saur	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	mecA	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	mecI_of_mecA	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	mecR1	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	tet(38)	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q-15_p1	20	-15	1	tet(M)	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p1-unicycler	20	0	1	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d20_q0_p3-unicycler	20	0	3	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_022832755.1	GCF_022832755.1_d50_q0_p1-unicycler	50	0	1	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	ant(9)-Ia	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	blaI_of_Z	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	blaR1	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	mecA	Chromosomal	Chromosomal	Moderate-confidence plasmid	flipped
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Moderate-confidence plasmid	flipped
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	mecR1	Chromosomal	Chromosomal	Moderate-confidence plasmid	flipped
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d10_q0_p1-unicycler	10	0	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid	Chromosomal	changed_other
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	ant(9)-Ia	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	aph(2'')-Ih	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	aph(3')-IIIa	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	blaI_of_Z	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	blaPC1	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	blaR1	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	dfrG	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	fosB-Saur	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	mecA	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	mecI_of_mecA	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	mecR1	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	tet(38)	Chromosomal	Chromosomal		lost
+GCF_026625305.1	GCF_026625305.1_d20_q-15_p1	20	-15	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid		lost
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	High-confidence plasmid	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p1-unicycler	20	0	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid	Chromosomal	changed_other
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	erm(C)	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	mecA	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	mecI_of_mecA	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	mecR1	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d20_q0_p3-unicycler	20	0	3	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	mecA	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	mecR1	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_026625305.1	GCF_026625305.1_d50_q0_p1-unicycler	50	0	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid		lost
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	aph(2'')-Ih	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	sat4	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d10_q0_p1-unicycler	10	0	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid	Chromosomal	changed_other
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	ant(9)-Ia	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	aph(2'')-Ih	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	aph(3')-IIIa	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	blaI_of_Z	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	blaPC1	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	blaR1	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	dfrG	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	fosB-Saur	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	mecA	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	mecI_of_mecA	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	mecR1	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	sat4	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	tet(38)	Chromosomal	Chromosomal		lost
+GCF_030252755.1	GCF_030252755.1_d20_q-15_p1	20	-15	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid		lost
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	sat4	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p1-unicycler	20	0	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid		lost
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	erm(C)	High-confidence plasmid	High-confidence plasmid	High-confidence plasmid	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	sat4	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d20_q0_p3-unicycler	20	0	3	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid		lost
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	aph(3')-IIIa	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	blaI_of_Z	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	blaPC1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	blaR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	dfrG	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	erm(A)	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	mecI_of_mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	mecR1	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	sat4	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_030252755.1	GCF_030252755.1_d50_q0_p1-unicycler	50	0	1	tet(M)	Mixed (gene in several tiers)	Chromosomal;High-confidence plasmid		lost
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	cat-TC	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	mecA	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d10_q0_p1-unicycler	10	0	1	tet(K)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	aph(2'')-Ih	Chromosomal	Chromosomal		lost
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	cat-TC	High-confidence plasmid	High-confidence plasmid		lost
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	erm(C)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	fosB-Saur	Chromosomal	Chromosomal		lost
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	mecA	Chromosomal	Chromosomal		lost
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	tet(38)	Chromosomal	Chromosomal		lost
+GCF_044789125.1	GCF_044789125.1_d20_q-15_p1	20	-15	1	tet(K)	High-confidence plasmid	High-confidence plasmid		lost
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	cat-TC	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p1-unicycler	20	0	1	tet(K)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	cat-TC	High-confidence plasmid	High-confidence plasmid	High-confidence plasmid	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	erm(C)	High-confidence plasmid	High-confidence plasmid	High-confidence plasmid	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d20_q0_p3-unicycler	20	0	3	tet(K)	High-confidence plasmid	High-confidence plasmid	High-confidence plasmid	same
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	cat-TC	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	erm(C)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_044789125.1	GCF_044789125.1_d50_q0_p1-unicycler	50	0	1	tet(K)	High-confidence plasmid	High-confidence plasmid	Moderate-confidence plasmid	changed_other
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	ant(4')-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	blaI_of_Z	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	blaPC1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	blaR1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	bleO	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	erm(A)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d10_q0_p1-unicycler	10	0	1	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	ant(4')-Ia	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	ant(9)-Ia	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	aph(2'')-Ih	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	blaI_of_Z	High-confidence plasmid	High-confidence plasmid		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	blaPC1	High-confidence plasmid	High-confidence plasmid		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	blaR1	High-confidence plasmid	High-confidence plasmid		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	bleO	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	erm(A)	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	fosB-Saur	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	mecA	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	tet(38)	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q-15_p1	20	-15	1	tet(M)	Chromosomal	Chromosomal		lost
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	ant(4')-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	blaI_of_Z	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	blaPC1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	blaR1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	bleO	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	erm(A)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p1-unicycler	20	0	1	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	ant(4')-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	ant(9)-Ia	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	blaI_of_Z	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	blaPC1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	blaR1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	bleO	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	erm(A)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d20_q0_p3-unicycler	20	0	3	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	ant(4')-Ia	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	ant(9)-Ia	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	aph(2'')-Ih	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	blaI_of_Z	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	blaPC1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	blaR1	High-confidence plasmid	High-confidence plasmid	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	bleO	Chromosomal	Chromosomal	Ambiguous	to_ambiguous
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	erm(A)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	fosB-Saur	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	mecA	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	tet(38)	Chromosomal	Chromosomal	Chromosomal	same
+GCF_057077345.1	GCF_057077345.1_d50_q0_p1-unicycler	50	0	1	tet(M)	Chromosomal	Chromosomal	Chromosomal	same
