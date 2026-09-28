@@ -1,0 +1,16 @@
+Depth	Quality_Shift	Plasmid_Copies	Reference_Tier	N_Genes	Recovered	Same_Tier	Flipped_Class	To_Ambiguous	Recovered_Pct	Same_Tier_Pct_Of_Recovered	Note
+10	0	1	Chromosomal	52	47	31	3	13	90.4	66.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+10	0	1	High-confidence plasmid	9	8	0	0	3	88.9	0.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+10	0	1	Mixed (gene in several tiers)	2	2	0	0	0	100.0	0.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	-15	1	Chromosomal	52	0	0	0	0	0.0		DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	-15	1	High-confidence plasmid	9	0	0	0	0	0.0		DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	-15	1	Mixed (gene in several tiers)	2	0	0	0	0	0.0		DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	0	1	Chromosomal	52	52	36	0	16	100.0	69.2	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	0	1	High-confidence plasmid	9	8	1	0	3	88.9	12.5	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	0	1	Mixed (gene in several tiers)	2	1	0	0	0	50.0	0.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	0	3	Chromosomal	52	52	33	0	19	100.0	63.5	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	0	3	High-confidence plasmid	9	8	4	0	4	88.9	50.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+20	0	3	Mixed (gene in several tiers)	2	1	0	0	1	50.0	0.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+50	0	1	Chromosomal	52	51	33	0	18	98.1	64.7	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+50	0	1	High-confidence plasmid	9	9	0	0	4	100.0	0.0	DIAGNOSTIC ONLY - simulated reads, not an accuracy figure
+50	0	1	Mixed (gene in several tiers)	2	0	0	0	0	0.0		DIAGNOSTIC ONLY - simulated reads, not an accuracy figure

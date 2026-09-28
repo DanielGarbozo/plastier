@@ -1,0 +1,9 @@
+Method	Class	Calls	Coverage	TP	FP	FN	Precision	Recall	F1_Score
+Tier framework (High+Moderate = plasmid)	Plasmid	15	1.0	15	0	0	1.0	1.0	1.0
+Tier framework (High+Moderate = plasmid)	Chromosome	321	1.0	321	0	0	1.0	1.0	1.0
+MOB-suite alone	Plasmid	15	1.0	15	0	0	1.0	1.0	1.0
+MOB-suite alone	Chromosome	321	1.0	321	0	0	1.0	1.0	1.0
+Platon alone	Plasmid	14	1.0	14	0	1	1.0	0.9333	0.9655
+Platon alone	Chromosome	322	1.0	321	1	0	0.9969	1.0	0.9984
+RFPlasmid alone	Plasmid	15	1.0	15	0	0	1.0	1.0	1.0
+RFPlasmid alone	Chromosome	321	1.0	321	0	0	1.0	1.0	1.0

@@ -26,9 +26,21 @@ Predicted-bins mapping (from MOB-suite's contig_report.txt):
   ("primary MOB-cluster id of neighbor" per mob-suite's own README/
   constants.py), is what groups separate contigs into the same reconstructed
   plasmid - the same grouping MOB-recon itself uses to write each
-  plasmid_(X).fasta file. That is used directly as PlasEval's `plasmid` bin
-  ID. Rows are kept only where molecule_type == "Plasmid" (chromosome-
-  assigned contigs are excluded, matching what a plasmid bin means).
+  plasmid_(X).fasta file. Rows are kept only where molecule_type is "plasmid"
+  (chromosome-assigned contigs are excluded, matching what a plasmid bin means).
+
+  Three details that only show up on a real MOB-suite report (found running the
+  pipeline on the closed genomes; a hand-built fixture hid all three):
+  - molecule_type is lowercase ("plasmid"), so the match is case-insensitive.
+  - contig_id is the whole FASTA header ("NZ_LR027879.1 Staphylococcus aureus ...");
+    PlasEval matches contigs by exact id, so only its first token is used - the
+    replicon accession, which is what the ground truth uses.
+  - primary_cluster_id is a MOB-cluster name (e.g. AA849) shared by unrelated
+    plasmids in different genomes, and is "-" for a plasmid contig with no cluster.
+    Bins are therefore named <sample_id>|<cluster>, and an unclustered contig is a
+    bin of its own (<sample_id>|<contig>) instead of all sharing one "-" bin.
+  Several reports (one per genome) can be converted into one file, since contig
+  accessions are unique across genomes.
 
 Usage:
     python plaseval_convert.py ground-truth \\
@@ -36,7 +48,7 @@ Usage:
         --output gt_bins.tsv
 
     python plaseval_convert.py predicted \\
-        --input results/mobsuite/SAMPLE_contig_report.txt \\
+        --input results/mobsuite/*/contig_report.txt \\
         --output pred_bins.tsv
 """
 
@@ -44,11 +56,13 @@ import argparse
 
 import pandas as pd
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
-def convert_ground_truth(input_path: str, output_path: str) -> None:
+def convert_ground_truth(input_path: str, output_path: str, only: list = None) -> None:
     gt = pd.read_csv(input_path, dtype=str)
+    if only:  # a partial run must not be penalised for genomes it never processed
+        gt = gt[gt["Genome_Accession"].isin(only)]
     plasmids = gt[gt["Plasmid_Accession"] != "None"].copy()
     out = pd.DataFrame(
         {
@@ -60,16 +74,17 @@ def convert_ground_truth(input_path: str, output_path: str) -> None:
     out.to_csv(output_path, sep="\t", index=False)
 
 
-def convert_predicted(input_path: str, output_path: str) -> None:
-    mob = pd.read_csv(input_path, sep="\t", dtype=str)
-    plasmid_contigs = mob[mob["molecule_type"] == "Plasmid"].copy()
-    out = pd.DataFrame(
-        {
-            "plasmid": plasmid_contigs["primary_cluster_id"],
-            "contig": plasmid_contigs["contig_id"],
-            "contig_len": plasmid_contigs["size"],
-        }
-    )
+def convert_predicted(input_paths: list, output_path: str) -> None:
+    frames = []
+    for path in input_paths:
+        mob = pd.read_csv(path, sep="\t", dtype=str)
+        plasmids = mob[mob["molecule_type"].str.strip().str.lower() == "plasmid"]
+        contigs = plasmids["contig_id"].str.split().str[0]
+        cluster = plasmids["primary_cluster_id"].fillna("-").str.strip()
+        unclustered = cluster.isin(["", "-"])
+        bin_name = plasmids["sample_id"] + "|" + cluster.where(~unclustered, contigs)
+        frames.append(pd.DataFrame({"plasmid": bin_name, "contig": contigs, "contig_len": plasmids["size"]}))
+    out = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["plasmid", "contig", "contig_len"])
     out.to_csv(output_path, sep="\t", index=False)
 
 
@@ -83,16 +98,18 @@ def main():
     gt_parser = sub.add_parser("ground-truth", help="Convert closed_genome_ground_truth.csv (#31) to gt_bins.tsv")
     gt_parser.add_argument("--input", required=True, help="Path to closed_genome_ground_truth.csv")
     gt_parser.add_argument("--output", required=True, help="Output path for gt_bins.tsv")
+    gt_parser.add_argument("--only", nargs="+", help="Keep only these Genome_Accession values (partial runs)")
 
     pred_parser = sub.add_parser("predicted", help="Convert MOB-suite's contig_report.txt to pred_bins.tsv")
-    pred_parser.add_argument("--input", required=True, help="Path to a contig_report.txt (stage 4, MOB-suite)")
+    pred_parser.add_argument("--input", required=True, nargs="+",
+                             help="One or more contig_report.txt files (stage 4, MOB-suite), one per genome")
     pred_parser.add_argument("--output", required=True, help="Output path for pred_bins.tsv")
 
     parser.add_argument("--version", action="version", version=f"plaseval_convert {__version__}")
     args = parser.parse_args()
 
     if args.mode == "ground-truth":
-        convert_ground_truth(args.input, args.output)
+        convert_ground_truth(args.input, args.output, args.only)
     elif args.mode == "predicted":
         convert_predicted(args.input, args.output)
 
