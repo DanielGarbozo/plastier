@@ -32,6 +32,16 @@
                     "description": "Path to a text file of public SRA/ENA/DDBJ/GEO accession IDs, one per line. When set, stage 1 (nf-core/fetchngs) retrieves the reads and feeds them into stage 2 (nf-core/bacass) in place of --input.",
                     "fa_icon": "fas fa-cloud-download-alt"
                 },
+                "assemblies": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to a CSV with columns 'sample' and 'fasta' listing finished genome assemblies (plain or gzipped FASTA; local paths or URLs). Skips stages 1-2 and annotates each FASTA with Prokka, keeping contig ids unchanged. Used for stage 7 validation against closed genomes.",
+                    "help_text": "Takes precedence over --sra_ids and --input. Contig ids in the FASTA are preserved all the way to the tier calls, which is what lets stage 7 match each ARG to a closed genome's replicon accession.",
+                    "fa_icon": "fas fa-dna"
+                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
@@ -188,6 +198,31 @@
                 "show_hidden": {
                     "type": "boolean",
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+                }
+            }
+        },
+        "slurm_options": {
+            "title": "Slurm options",
+            "type": "object",
+            "fa_icon": "fas fa-server",
+            "description": "Options for running each pipeline task as its own Slurm job (-profile slurm, see conf/slurm.config).",
+            "properties": {
+                "slurm_partition": {
+                    "type": "string",
+                    "description": "Slurm partition/QOS every task is submitted to (default 'cpu_short' when -profile slurm is used).",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "slurm_account": {
+                    "type": "string",
+                    "description": "Slurm account to charge, passed as --account. Required on clusters that demand one; deliberately has no default.",
+                    "fa_icon": "fas fa-id-card"
+                },
+                "slurm_max_time": {
+                    "type": "string",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s?(ms|s|sec|m|min|h|hour|d|day)s?$",
+                    "description": "Longest walltime any single task may request, e.g. '6.h'.",
+                    "help_text": "Some partitions reject (rather than queue) a job asking for more than their walltime limit, and conf/base.config requests up to 8 h for process_medium and 16 h for process_high. Requests above this value are clamped down to it. Unset means no clamp.",
+                    "fa_icon": "fas fa-hourglass-half"
                 }
             }
         },
@@ -957,6 +992,9 @@
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/slurm_options"
         },
         {
             "$ref": "#/$defs/fetchngs_options"

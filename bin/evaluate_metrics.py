@@ -1,176 +1,160 @@
 #!/usr/bin/env python3
 
 """
-Stage 7 Validation: evaluate_metrics.py
+Stage 7b (issue #32): per-tier precision / recall / F1 against the closed-genome
+ground truth.
 
-Calculates Precision, Recall, and F1-score per confidence tier by comparing
-the pipeline's tier_resolution.py output against the closed-genome ground truth.
+Compares stage 5's `tier` call per ARG (bin/tier_resolution.py output) with where
+that ARG actually sits in a closed reference genome.
 
-Logic:
-Since the ground-truth consists of closed genomes (chromosome + resolved plasmids):
-- If a predicted ARG is listed in the PLSDB ground-truth for that genome -> True = Plasmid
-- If a predicted ARG is NOT listed in the PLSDB ground-truth -> True = Chromosome
+Ground truth: assets/validation/closed_genome_ground_truth.csv lists, per
+genome (`Genome_Accession`), every plasmid replicon's accession
+(`Plasmid_Accession`). An ARG is truly on a plasmid iff the contig it was called
+on is one of its genome's plasmid replicons, and truly chromosomal otherwise.
+This is exact per-contig truth - matching on gene *names* instead would call a
+gene like qacA "plasmid" everywhere in a genome that carries it on both a plasmid
+and the chromosome.
 
-Metrics are computed independently for each tier to ensure no tier hides systemic issues.
+That only works if `input_sequence_id` in the predictions is the reference
+replicon's own accession, which is the case when stages 3-6 run directly on the
+reference FASTA (see --assemblies) and NOT when reads are re-assembled (contigs
+are then just "1", "2", ...). Predictions whose sequence ids are not accessions
+are rejected rather than silently scored as all-chromosomal.
+
+Metrics are computed per tier and never pooled across tiers, so a tier that is
+systematically unreliable cannot hide behind a good aggregate (see docs/decisions.md).
+
+- High / Moderate-confidence plasmid: positive class is "true plasmid".
+- Chromosomal: positive class is "true chromosome".
+- Ambiguous: a deliberate abstention with no true-class equivalent, so only the
+  call counts are reported (precision/recall/F1 are left blank).
+
+Per tier: TP = calls of that tier whose true location matches the tier's class,
+FP = calls of that tier that do not, FN = ARGs of the tier's true class that were
+NOT assigned that tier (so recall = share of all true-plasmid/true-chromosome
+ARGs that ended up in this tier).
 """
 
 import argparse
-import pandas as pd
-import numpy as np
-import sys
 import re
+import sys
+from pathlib import Path
 
-__version__ = "0.1.0"
+import pandas as pd
 
-def clean_gene_name(gene: str) -> str:
-    """Normalize gene names for safer matching (e.g. 'blaZ' vs 'blaZ-1')."""
-    if pd.isna(gene):
-        return ""
-    # Lowercase and remove common suffixes that might mismatch
-    return str(gene).strip().lower()
+__version__ = "0.2.0"
+
+TIER_SUFFIX = ".tier_resolution.tsv"
+ACCESSION_RE = re.compile(r"^[A-Z]{1,2}_?[A-Z0-9]+\.\d+$")
+
+PLASMID_TIERS = ("High-confidence plasmid", "Moderate-confidence plasmid")
+CHROMOSOMAL_TIER = "Chromosomal"
+AMBIGUOUS_TIER = "Ambiguous"
+TIERS = (*PLASMID_TIERS, CHROMOSOMAL_TIER, AMBIGUOUS_TIER)
+
+
+def first_token(seq_id) -> str:
+    return str(seq_id).split()[0]
+
+
+def genome_id_from_path(path: Path) -> str:
+    name = path.name
+    return name[: -len(TIER_SUFFIX)] if name.endswith(TIER_SUFFIX) else path.stem
+
+
+def load_plasmid_replicons(path: str) -> dict:
+    gt = pd.read_csv(path, dtype=str)
+    missing = {"Genome_Accession", "Plasmid_Accession"} - set(gt.columns)
+    if missing:
+        sys.exit(f"Error: ground truth is missing column(s) {sorted(missing)}; found {list(gt.columns)}")
+    gt = gt.dropna(subset=["Genome_Accession", "Plasmid_Accession"])
+    return gt.groupby("Genome_Accession")["Plasmid_Accession"].agg(set).to_dict()
+
+
+def label_predictions(pred_path: Path, genome_id: str, replicons: dict) -> pd.DataFrame:
+    if genome_id not in replicons:
+        sys.exit(f"Error: genome '{genome_id}' (from {pred_path.name}) is not in the ground truth; pass --genome-id.")
+
+    df = pd.read_csv(pred_path, sep="\t", dtype=str)
+    missing = {"gene_symbol", "input_sequence_id", "tier"} - set(df.columns)
+    if missing:
+        sys.exit(f"Error: {pred_path.name} is missing column(s) {sorted(missing)}.")
+    if df.empty:
+        return df.assign(genome_id=genome_id, true_location=[])
+
+    df = df.copy()
+    df["contig"] = df["input_sequence_id"].map(first_token)
+    not_accessions = sorted(set(df["contig"][~df["contig"].str.match(ACCESSION_RE)]))
+    if not_accessions:
+        sys.exit(
+            f"Error: {pred_path.name} has sequence ids that are not replicon accessions "
+            f"({not_accessions[:5]}...). Per-contig truth needs stages 3-6 run on the reference "
+            "FASTA (--assemblies), not on a re-assembly."
+        )
+
+    df["genome_id"] = genome_id
+    df["true_location"] = df["contig"].map(lambda c: "Plasmid" if c in replicons[genome_id] else "Chromosome")
+    return df
+
+
+def tier_metrics(eval_df: pd.DataFrame) -> pd.DataFrame:
+    n_true = eval_df["true_location"].value_counts()
+    rows = []
+    for tier in TIERS:
+        calls = eval_df[eval_df["tier"] == tier]
+        row = {
+            "Tier": tier,
+            "Total_Calls": len(calls),
+            "Calls_True_Plasmid": int((calls["true_location"] == "Plasmid").sum()),
+            "Calls_True_Chromosome": int((calls["true_location"] == "Chromosome").sum()),
+            "TP": None, "FP": None, "FN": None, "Precision": None, "Recall": None, "F1_Score": None,
+        }
+        if tier != AMBIGUOUS_TIER:
+            target = "Plasmid" if tier in PLASMID_TIERS else "Chromosome"
+            tp = int((calls["true_location"] == target).sum())
+            fp = len(calls) - tp
+            fn = int(n_true.get(target, 0)) - tp
+            precision = tp / (tp + fp) if tp + fp else 0.0
+            recall = tp / (tp + fn) if tp + fn else 0.0
+            f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+            row.update(TP=tp, FP=fp, FN=fn, Precision=round(precision, 4), Recall=round(recall, 4), F1_Score=round(f1, 4))
+        rows.append(row)
+    return pd.DataFrame(rows)
+
 
 def main():
     parser = argparse.ArgumentParser(
         prog="evaluate_metrics",
-        description="Calculate Precision/Recall/F1 per tier against ground truth.",
+        description="Per-tier precision/recall/F1 of tier_resolution.py output against the closed-genome ground truth.",
     )
-    parser.add_argument("--predictions", required=True, help="Output TSV from tier_resolution.py")
-    parser.add_argument("--ground-truth", required=True, help="Curated ground-truth CSV (e.g., table_summary.csv)")
-    parser.add_argument("--genome-id", required=False, help="Genome Accession (if processing a single genome prediction file)")
-    parser.add_argument("--output", required=True, help="Output metrics TSV path")
+    parser.add_argument("--predictions", required=True, nargs="+", type=Path,
+                        help="One or more *.tier_resolution.tsv files (one per genome)")
+    parser.add_argument("--ground-truth", required=True, help="assets/validation/closed_genome_ground_truth.csv")
+    parser.add_argument("--genome-id", help="Genome accession; only valid with a single predictions file. "
+                                             f"Default: the filename minus '{TIER_SUFFIX}'.")
+    parser.add_argument("--output", required=True, help="Output per-tier metrics TSV")
+    parser.add_argument("--per-arg-output", help="Optional TSV of every ARG with its predicted tier and true location")
+    parser.add_argument("--version", action="version", version=f"evaluate_metrics {__version__}")
     args = parser.parse_args()
 
-    # 1. Load Ground Truth
-    try:
-        gt_df = pd.read_csv(args.ground_truth, dtype=str)
-    except Exception as e:
-        sys.exit(f"Error reading ground truth: {e}")
+    if args.genome_id and len(args.predictions) != 1:
+        sys.exit("Error: --genome-id can only be used with a single predictions file.")
 
-    # Build a dictionary of true plasmid ARGs per genome
-    # Format: { 'GCF_...': {'blaz', 'meca', ...} }
-    true_plasmid_args = {}
-    for _, row in gt_df.iterrows():
-        genome = row.get("Assembly Accession", "")
-        if pd.isna(genome) or not genome:
-            continue
-        
-        if genome not in true_plasmid_args:
-            true_plasmid_args[genome] = set()
-            
-        genes_str = row.get("Documented AMR Content", "")
-        if pd.notna(genes_str) and genes_str.strip() != "None":
-            # Split by comma and clean
-            genes = [clean_gene_name(g) for g in genes_str.split(",")]
-            true_plasmid_args[genome].update(genes)
-
-    # 2. Load Predictions
-    try:
-        pred_df = pd.read_csv(args.predictions, sep="\t", dtype=str)
-    except Exception as e:
-        sys.exit(f"Error reading predictions: {e}")
-
-    if "tier" not in pred_df.columns or "gene_symbol" not in pred_df.columns:
-        sys.exit("Error: Predictions file must contain 'tier' and 'gene_symbol' columns.")
-
-    # 3. Evaluate Predictions
-    results = []
-    for _, row in pred_df.iterrows():
-        gene = clean_gene_name(row["gene_symbol"])
-        tier = row["tier"]
-        
-        # Determine genome_id for this row
-        genome_id = args.genome_id
-        if not genome_id:
-            if "genome_id" in row:
-                genome_id = row["genome_id"]
-            elif "Assembly Accession" in row:
-                genome_id = row["Assembly Accession"]
-            else:
-                # Fallback: try to extract GCF_... from input_sequence_id
-                seq_id = str(row.get("input_sequence_id", ""))
-                match = re.search(r'(GCF_\d+\.\d+)', seq_id)
-                if match:
-                    genome_id = match.group(1)
-                else:
-                    sys.exit("Error: No --genome-id provided and could not find genome ID in columns.")
-        
-        # True location logic
-        genome_plasmid_genes = true_plasmid_args.get(genome_id, set())
-        
-        # Substring/fuzzy match since PLSDB might say 'blaZ' and tool might say 'blaZ-1'
-        is_plasmid = any(gene in pt or pt in gene for pt in genome_plasmid_genes if pt)
-        true_location = "Plasmid" if is_plasmid else "Chromosome"
-        
-        results.append({
-            "genome_id": genome_id,
-            "gene_symbol": row["gene_symbol"],
-            "predicted_tier": tier,
-            "true_location": true_location
-        })
-
-    eval_df = pd.DataFrame(results)
-    
-    if eval_df.empty:
-        sys.exit("No predictions to evaluate.")
-
-    # 4. Calculate Metrics per Tier
-    tiers = [
-        "High-confidence plasmid",
-        "Moderate-confidence plasmid",
-        "Chromosomal",
-        "Ambiguous"
+    replicons = load_plasmid_replicons(args.ground_truth)
+    labelled = [
+        label_predictions(p, args.genome_id or genome_id_from_path(p), replicons) for p in args.predictions
     ]
-    
-    metrics = []
-    total_true_plasmids = len(eval_df[eval_df["true_location"] == "Plasmid"])
-    total_true_chromosomes = len(eval_df[eval_df["true_location"] == "Chromosome"])
-    
-    for t in tiers:
-        tier_preds = eval_df[eval_df["predicted_tier"] == t]
-        
-        if t in ["High-confidence plasmid", "Moderate-confidence plasmid"]:
-            target_true = "Plasmid"
-            total_target = total_true_plasmids
-        elif t == "Chromosomal":
-            target_true = "Chromosome"
-            total_target = total_true_chromosomes
-        else: # Ambiguous
-            # Ambiguous is a rejection class; it has no 'true' equivalent.
-            # We just report how many were routed here.
-            metrics.append({
-                "Tier": t,
-                "TP": np.nan, "FP": np.nan, "FN": np.nan,
-                "Precision": np.nan, "Recall": np.nan, "F1_Score": np.nan,
-                "Total_Calls": len(tier_preds)
-            })
-            continue
-            
-        tp = len(tier_preds[tier_preds["true_location"] == target_true])
-        fp = len(tier_preds[tier_preds["true_location"] != target_true])
-        
-        # FN for a specific tier = True genes of that target type that were NOT predicted as this tier
-        fn = total_target - tp
-        
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-        
-        metrics.append({
-            "Tier": t,
-            "TP": tp,
-            "FP": fp,
-            "FN": fn,
-            "Precision": round(precision, 4),
-            "Recall": round(recall, 4),
-            "F1_Score": round(f1, 4),
-            "Total_Calls": len(tier_preds)
-        })
-        
-    metrics_df = pd.DataFrame(metrics)
-    
-    # Save results
-    metrics_df.to_csv(args.output, sep="\t", index=False)
-    print(f"Metrics successfully computed and saved to {args.output}")
+    eval_df = pd.concat(labelled, ignore_index=True)
+    if eval_df.empty:
+        sys.exit("Error: no ARG calls to evaluate.")
+
+    tier_metrics(eval_df).to_csv(args.output, sep="\t", index=False)
+    if args.per_arg_output:
+        eval_df[["genome_id", "gene_symbol", "contig", "tier", "true_location"]].to_csv(
+            args.per_arg_output, sep="\t", index=False
+        )
+    print(f"Evaluated {len(eval_df)} ARG calls across {eval_df['genome_id'].nunique()} genome(s) -> {args.output}")
+
 
 if __name__ == "__main__":
     main()

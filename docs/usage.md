@@ -50,6 +50,33 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
+## Assembly input (skip stages 1-2)
+
+If you already have finished assemblies, for example closed reference genomes for the stage 7 validation, pass them with `--assemblies` instead of reads. Stages 1-2 (fetchngs, bacass) are skipped; each FASTA is annotated with Prokka, exactly as bacass would, and goes straight into ARG screening, plasmid classification, typing and evidence integration.
+
+```bash
+--assemblies '[path to assemblies csv]'
+```
+
+```csv title="assemblies.csv"
+sample,fasta
+GCF_045345275.1,/path/to/GCF_045345275.1.fna.gz
+GCF_900607265.1,https://example.org/GCF_900607265.1.fna.gz
+```
+
+| Column   | Description                                                                 |
+| -------- | --------------------------------------------------------------------------- |
+| `sample` | Sample name, used as the prefix of every output file.                       |
+| `fasta`  | Path or URL to the assembly, plain or gzipped FASTA.                        |
+
+Contig ids in the FASTA are kept unchanged all the way to the per-ARG tier calls. Stage 7 depends on this: it scores each ARG by checking whether its contig id is one of the closed genome's plasmid accessions (see [`bin/evaluate_metrics.py`](../bin/evaluate_metrics.py)).
+
+`--assemblies` takes precedence over `--sra_ids` and `--input`. To fetch the closed reference genomes used for validation and build this samplesheet for them:
+
+```bash
+python3 assets/validation/fetch_reference_genomes.py --outdir <DIR> --samplesheet <DIR>/assemblies.csv
+```
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:

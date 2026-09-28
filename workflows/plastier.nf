@@ -11,6 +11,7 @@ include { methodsDescriptionText    } from '../subworkflows/local/utils_nfcore_p
 include { validateInputSamplesheet  } from '../subworkflows/local/utils_nfcore_plastier_pipeline'
 include { FETCHNGS                  } from '../subworkflows/local/fetchngs/main'
 include { BACASS                    } from '../subworkflows/local/bacass/main'
+include { PROKKA                    } from '../modules/nf-core/prokka'
 include { ARG                       } from '../subworkflows/local/funcscan_arg/main'
 include { PLASMID_CLASSIFICATION    } from '../subworkflows/local/plasmid_classification/main'
 include { EVIDENCE_INTEGRATION      } from '../subworkflows/local/evidence_integration/main'
@@ -37,50 +38,89 @@ workflow PLASTIER {
     def ch_multiqc_files = channel.empty()
 
     //
-    // STAGE 1 (optional): retrieve public reads via nf-core/fetchngs (--sra_ids)
+    // STAGES 1-2: reads -> assembly (+ annotation), or --assemblies to skip them
     //
-    // If --sra_ids is given, download the runs it lists and build the stage-2
-    // input samplesheet from the result, in place of a pre-existing --input file.
-    // Fails fast if neither is provided, since bacass has nothing to assemble.
+    // Three ways in, in order of precedence (the `test` profile sets --input, so a
+    // conflict cannot be an error - same reasoning as --sra_ids over --input):
+    //   --assemblies  a samplesheet of finished FASTAs (sample,fasta). Stages 1-2 are
+    //                 skipped and each FASTA is annotated with PROKKA, the same tool
+    //                 BACASS uses, so stages 3+ see identical inputs. Contig ids stay
+    //                 exactly as they are in the FASTA - stage 7 validation relies on
+    //                 this to match calls to a closed genome's replicon accessions.
+    //   --sra_ids     stage 1 (nf-core/fetchngs) downloads public reads, then stage 2.
+    //   --input       a fastq samplesheet, straight to stage 2 (nf-core/bacass).
     //
-    def ch_bacass_input
-    if (params.sra_ids) {
-        def ch_ids = channel
-            .fromPath(params.sra_ids, checkIfExists: true)
-            .splitCsv(header: false, sep: '', strip: true)
-            .map { it[0] }
-            .unique()
+    def ch_assembly
+    def ch_annotation_faa
+    def ch_bacass_multiqc = channel.empty()
 
-        FETCHNGS ( ch_ids )
-        ch_versions = ch_versions.mix(FETCHNGS.out.versions)
-
-        // FETCHNGS's samplesheet.csv uses its own columns (sample, fastq_1, fastq_2, ...),
-        // distinct from assets/schema_input.json (bacass's ID/R1/R2/LongFastQ/Fast5 schema
-        // used for --input) - parsed directly here rather than through that schema.
-        // fetchngs only retrieves short reads, so longread/fast5 are always 'NA'.
-        ch_bacass_input = FETCHNGS.out.samplesheet
+    if (params.assemblies) {
+        ch_assembly = channel
+            .fromPath(params.assemblies, checkIfExists: true)
             .splitCsv(header: true)
             .map { row ->
-                def meta = [ id: row.sample, sample: row.sample ]
-                row.fastq_2
-                    ? [ row.sample, meta + [ single_end: false ], [ file(row.fastq_1, checkIfExists: true), file(row.fastq_2, checkIfExists: true) ], 'NA', 'NA' ]
-                    : [ row.sample, meta + [ single_end: true ], [ file(row.fastq_1, checkIfExists: true) ], 'NA', 'NA' ]
+                if (!row.sample || !row.fasta) {
+                    error("--assemblies must be a csv with 'sample' and 'fasta' columns; got: ${row}")
+                }
+                [ [ id: row.sample, sample: row.sample ], file(row.fasta, checkIfExists: true) ]
             }
-            .groupTuple()
-            .map { samplesheet -> validateInputSamplesheet(samplesheet) }
-            .map { meta, fastqs, longread, fast5 -> [ meta, fastqs.flatten(), longread, fast5[0] ] }
-    } else {
-        if (!params.input) {
-            error("Either --input (a fastq samplesheet) or --sra_ids (a list of public accessions for nf-core/fetchngs) must be provided.")
-        }
-        ch_bacass_input = ch_samplesheet
-    }
 
-    //
-    // STAGE 2: uniform QC and assembly via nf-core/bacass
-    //
-    BACASS ( ch_bacass_input )
-    ch_versions = ch_versions.mix(BACASS.out.versions)
+        // PROKKA gunzips a .gz FASTA itself (see modules/nf-core/prokka), as BACASS relies on.
+        PROKKA ( ch_assembly, params.prokka_proteins ? file(params.prokka_proteins, checkIfExists: true) : [], [] )
+        ch_annotation_faa = PROKKA.out.faa
+    } else {
+
+        //
+        // STAGE 1 (optional): retrieve public reads via nf-core/fetchngs (--sra_ids)
+        //
+        // If --sra_ids is given, download the runs it lists and build the stage-2
+        // input samplesheet from the result, in place of a pre-existing --input file.
+        // Fails fast if none of --input, --sra_ids or --assemblies is provided, since
+        // bacass has nothing to assemble.
+        //
+        def ch_bacass_input
+        if (params.sra_ids) {
+            def ch_ids = channel
+                .fromPath(params.sra_ids, checkIfExists: true)
+                .splitCsv(header: false, sep: '', strip: true)
+                .map { it[0] }
+                .unique()
+
+            FETCHNGS ( ch_ids )
+            ch_versions = ch_versions.mix(FETCHNGS.out.versions)
+
+            // FETCHNGS's samplesheet.csv uses its own columns (sample, fastq_1, fastq_2, ...),
+            // distinct from assets/schema_input.json (bacass's ID/R1/R2/LongFastQ/Fast5 schema
+            // used for --input) - parsed directly here rather than through that schema.
+            // fetchngs only retrieves short reads, so longread/fast5 are always 'NA'.
+            ch_bacass_input = FETCHNGS.out.samplesheet
+                .splitCsv(header: true)
+                .map { row ->
+                    def meta = [ id: row.sample, sample: row.sample ]
+                    row.fastq_2
+                        ? [ row.sample, meta + [ single_end: false ], [ file(row.fastq_1, checkIfExists: true), file(row.fastq_2, checkIfExists: true) ], 'NA', 'NA' ]
+                        : [ row.sample, meta + [ single_end: true ], [ file(row.fastq_1, checkIfExists: true) ], 'NA', 'NA' ]
+                }
+                .groupTuple()
+                .map { samplesheet -> validateInputSamplesheet(samplesheet) }
+                .map { meta, fastqs, longread, fast5 -> [ meta, fastqs.flatten(), longread, fast5[0] ] }
+        } else {
+            if (!params.input) {
+                error("One of --input (a fastq samplesheet), --sra_ids (a list of public accessions for nf-core/fetchngs) or --assemblies (a samplesheet of finished FASTAs) must be provided.")
+            }
+            ch_bacass_input = ch_samplesheet
+        }
+
+        //
+        // STAGE 2: uniform QC and assembly via nf-core/bacass
+        //
+        BACASS ( ch_bacass_input )
+        ch_versions = ch_versions.mix(BACASS.out.versions)
+
+        ch_assembly       = BACASS.out.assembly
+        ch_annotation_faa = BACASS.out.annotation_faa
+        ch_bacass_multiqc = BACASS.out.multiqc_report
+    }
 
     //
     // STAGE 3: ARG (antimicrobial resistance gene) screening via nf-core/funcscan
@@ -91,8 +131,8 @@ workflow PLASTIER {
     // when run_taxa_classification is off.
     //
     ARG (
-        BACASS.out.assembly,
-        BACASS.out.annotation_faa,
+        ch_assembly,
+        ch_annotation_faa,
         channel.empty(),
     )
     ch_versions = ch_versions.mix(ARG.out.versions)
@@ -103,7 +143,7 @@ workflow PLASTIER {
     // Runs off the same assembly as everything else. All three classifiers are
     // vendored (issues #8, #9, #10) - stage 4 is complete.
     //
-    PLASMID_CLASSIFICATION ( BACASS.out.assembly )
+    PLASMID_CLASSIFICATION ( ch_assembly )
     ch_versions = ch_versions.mix(PLASMID_CLASSIFICATION.out.versions)
 
     //
@@ -117,7 +157,7 @@ workflow PLASTIER {
     // the actual data dependency, not the stage numbering, but the channel
     // has to be defined before it's referenced.
     //
-    TYPING ( BACASS.out.assembly )
+    TYPING ( ch_assembly )
     ch_versions = ch_versions.mix(TYPING.out.versions)
 
     //
@@ -130,7 +170,7 @@ workflow PLASTIER {
     //
     EVIDENCE_INTEGRATION (
         ARG.out.report,
-        BACASS.out.assembly,
+        ch_assembly,
         PLASMID_CLASSIFICATION.out.mobsuite_contig_report,
         PLASMID_CLASSIFICATION.out.platon_tsv,
         PLASMID_CLASSIFICATION.out.rfplasmid_prediction,
@@ -194,10 +234,10 @@ workflow PLASTIER {
         }
     )
     // MULTIQC.out.report: pipeline-level summary (params, versions, methods description)
-    // BACASS.out.multiqc_report: stage-2 per-sample QC/assembly report
+    // ch_bacass_multiqc: stage-2 per-sample QC/assembly report (empty with --assemblies)
     emit:
     multiqc_report = MULTIQC.out.report.map { _meta, report -> report }
-        .mix(BACASS.out.multiqc_report.flatten())
+        .mix(ch_bacass_multiqc.flatten())
         .toList() // channel: [ /path/to/multiqc_report.html, ... ]
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }

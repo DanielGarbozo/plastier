@@ -11,3 +11,6 @@ testing*
 *.pyc
 null/
 .lineage/
+
+# Slurm job logs (assets/slurm/smoke_test.sbatch writes here)
+logs/

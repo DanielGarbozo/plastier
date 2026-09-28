@@ -18,12 +18,16 @@ process RFPLASMID {
     tag "$meta.id"
     label 'process_medium'
     // rfplasmid has no flag to redirect its .dmnd lookup path (see comment
-    // above) - the *.dmnd files have to be copied into its own install
+    // above) - the *.dmnd files have to be put into its own install
     // directory, which the default host-user-mapped container (docker
     // .runOptions '-u $(id -u):$(id -g)' in nextflow.config) cannot write to
-    // (that directory is root-owned inside the image). Root only for this
-    // process, purely to satisfy that write.
-    containerOptions "-u root"
+    // (that directory is root-owned inside the image).
+    //   docker:                root only for this process, purely to satisfy the copy.
+    //   singularity/apptainer: `-u root` is NOT valid there (-u means --userns, so
+    //     "root" was taken as the image path and the container never started), and
+    //     the image is read-only. --writable-tmpfs gives a small in-memory overlay
+    //     instead; the databases are far too big for it, so the script symlinks them.
+    containerOptions { workflow.containerEngine in ['singularity', 'apptainer'] ? '--writable-tmpfs' : '-u root' }
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
@@ -48,6 +52,7 @@ process RFPLASMID {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def is_compressed = fasta.getName().endsWith(".gz") ? true : false
     def fasta_name = fasta.getName().replace(".gz", "")
+    def read_only_image = workflow.containerEngine in ['singularity', 'apptainer']
     """
     if [ "${is_compressed}" == "true" ]; then
         gzip -c -d ${fasta} > ${fasta_name}
@@ -59,7 +64,12 @@ process RFPLASMID {
     cp ${fasta_name} input_dir/${prefix}.fasta
 
     RFPLASMID_PKG_DIR=\$(python3 -c "import RFPlasmid, os; print(os.path.dirname(RFPlasmid.__file__))")
-    cp *.dmnd \${RFPLASMID_PKG_DIR}/
+    if [ "${read_only_image}" == "true" ]; then
+        # read-only image + small tmpfs overlay: link, do not copy (see containerOptions)
+        for db in *.dmnd; do ln -sf "\$(readlink -f "\$db")" "\${RFPLASMID_PKG_DIR}/\$db"; done
+    else
+        cp *.dmnd \${RFPLASMID_PKG_DIR}/
+    fi
 
     rfplasmid \\
         --species ${species} \\

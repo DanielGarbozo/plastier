@@ -29,15 +29,15 @@ process SCCMECEXTRACTOR {
     // No bioconda package exists for this tool, so unlike every other module
     // in this repo there is no galaxyproject-hosted singularity mirror to
     // point at - singularity/apptainer pull the same Docker Hub image
-    // directly instead (`docker://` prefix), same tag either way. Both
-    // branches spell out `docker.io/` explicitly - this repo's nextflow.config
-    // sets docker.registry = 'quay.io' as the default, which silently
-    // prepends to any unqualified image name and 401s trying to resolve this
-    // image there (found by running the actual test, not by inspection).
+    // directly instead. Nextflow adds the `docker://` scheme itself for
+    // singularity/apptainer, so it must not be written here (doubled prefix,
+    // issue #50). `docker.io/` is spelled out explicitly - this repo's
+    // nextflow.config sets docker.registry = 'quay.io' as the default, which
+    // silently prepends to any unqualified image name and 401s trying to
+    // resolve this image there (found by running the actual test, not by
+    // inspection).
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' :
-        'docker.io/alisonmacfadyen/sccmecextractor:v1.5.0' }"
+    container "docker.io/alisonmacfadyen/sccmecextractor:v1.5.0"
 
     input:
     tuple val(meta), path(fasta)
@@ -58,7 +58,15 @@ process SCCMECEXTRACTOR {
         gzip -c -d ${fasta} > ${fasta_name}
     fi
 
-    sccmec-pipeline \\
+    # Issue #51 workaround: sccmec-pipeline is missing from the default PATH
+    # because Nextflow bypasses the container's docker-entrypoint.sh.
+    # We must explicitly run it inside the 'base' micromamba environment.
+    #
+    # Singularity/Apptainer runs with --no-home, so ~/.cache/mamba would sit in
+    # the container's read-only layer and micromamba dies with "Could not create
+    # proc dir ... Read-only file system". Point HOME at the writable task dir.
+    export HOME="\$PWD"
+    micromamba run -n base sccmec-pipeline \\
         -f ${fasta_name} \\
         -o results \\
         -t ${task.cpus} \\
@@ -67,6 +75,17 @@ process SCCMECEXTRACTOR {
     # sccmec-pipeline has no --version flag (it prints its usage/help text
     # instead, which broke versions.yml's YAML when captured directly) -
     # hardcoded to match the pinned container tag, same as done for fARGene.
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sccmecextractor: "1.5.0"
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    mkdir -p results
+    touch results/sccmec_unified_report.tsv
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         sccmecextractor: "1.5.0"
