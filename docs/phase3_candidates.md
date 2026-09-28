@@ -56,7 +56,12 @@ ENA keeps growing, so re-running the script later can return different runs. Thi
   be 7/10 wrong. Here `scientific_name` is filtered exactly and the runs are ordinary
   isolate WGS, but a mislabelled or mixed sample would still get through. The pipeline gives
   an independent check for free: stage 6's MLST should return a *S. aureus* sequence type
-  for every sample. A sample with no ST should be treated as a bad accession, not a result.
+  for every sample. A sample with no ST should be treated as a bad accession, not a result -
+  **unless the MLST scheme still matched the species** (as opposed to failing to match at
+  all): that means the allele combination itself is just novel/unregistered, not that the
+  species call is wrong. One Phase 3 sample did this (`SRR6347285`: species *saureus*, ST
+  `-`, but a normal *spa* type and ARG profile) and was kept rather than swapped out - see
+  `docs/phase3_results.md`.
 - **No strain typing is claimed.** ST, spa and SCCmec type are not known until stage 6 runs.
 - Four countries appear more than once (New Zealand, Japan, Spain, Switzerland), because the human and animal picks are made independently; the 15 human runs are from 15 different countries. The cat and dog runs share one study (PRJDB16052): each animal host has only one to six qualifying studies in ENA, so the one-run-per-study rule holds for the human runs but not across hosts.
 - Sequencing depth is 85-150x by design; results should not be read as an effect of depth

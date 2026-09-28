@@ -80,4 +80,15 @@ process SCCMECEXTRACTOR {
         sccmecextractor: "1.5.0"
     END_VERSIONS
     """
+
+    stub:
+    """
+    mkdir -p results
+    touch results/sccmec_unified_report.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sccmecextractor: "1.5.0"
+    END_VERSIONS
+    """
 }

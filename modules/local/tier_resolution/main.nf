@@ -39,4 +39,16 @@ process TIER_RESOLUTION {
         pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.tier_resolution.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        tier_resolution: \$(tier_resolution.py --version | sed 's/tier_resolution //g')
+        pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
+    END_VERSIONS
+    """
 }

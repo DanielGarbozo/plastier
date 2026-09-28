@@ -39,12 +39,23 @@ ARG counts are ARG x contig-location rows from `tier_resolution.tsv` (a gene pre
 contigs/copies counts once per row), split by tier: **High**-confidence plasmid, **Mod**erate,
 **Amb**iguous, **Chrom**osomal.
 
+## Reviewed and kept: SRR6347285
+
+The only sample with no MLST ST (all other 19 got one). **Decision: kept, not swapped out.**
+MLST still calls the species *S. aureus* and it typed a *spa* (t878), so this is a
+novel/unregistered allele combination, not a species mismatch (see the caveat added to
+`docs/phase3_candidates.md`). Its ARG profile also supports that reading rather than a bad
+accession: no mecA (staphopia-sccmec calls no SCCmec type at all, consistent) and only
+`blaZ`/`blaI_of_Z`/`blaR1` (the common penicillinase plasmid cassette) plus `tet(38)` (an
+intrinsic chromosomal efflux gene essentially universal in *S. aureus*, not acquired
+resistance) - an unremarkable, low-resistance profile from a 2008 Cambodia clinical isolate,
+a time/place combination underrepresented in the MLST database, which plausibly explains the
+unmatched ST better than a data-quality problem would. It is kept in the cohort as a
+de facto **mecA-negative / MSSA reference point**, in contrast to the mecA-positive samples in
+the table above, rather than as a claim that it is a validated true negative.
+
 ## Open questions for review
 
-- **SRR6347285 has no ST** (all other 19 got one). MLST still calls the species *S. aureus* and
-  it typed a *spa* (t878), so this reads as a novel/incomplete allele profile rather than
-  necessarily a bad accession - worth a manual look (e.g. contamination, low coverage) before
-  deciding whether to keep or swap it (`--exclude` in `select_candidates.py`, seed 42).
 - **SCCmecExtractor resolved the physical cassette in only 2/20 samples** (SRR14267647,
   SRR18339536); the other 18 failed, split `no_ccr` (10 - no *ccr* recombinase genes found,
   either genuinely non-MRSA or the region wasn't assembled) and `cross_contig` (8 - the *attR*/

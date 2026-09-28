@@ -1,0 +1,35 @@
+nextflow_pipeline {
+
+    name "Test pipeline: --assemblies"
+    script "../main.nf"
+    tag "pipeline"
+    tag "assemblies"
+
+    // Regression: the --assemblies entry point (stages 1-2 skipped, PROKKA annotates a
+    // finished FASTA directly - see workflows/plastier.nf) had no test coverage at all.
+    // -stub-run exercises the wiring (every downstream module accepts what --assemblies
+    // feeds it, all the way to stage 6) without needing real tool behaviour on the tiny
+    // synthetic fixture below, which is only sized for ARG-screening unit tests
+    // (subworkflows/local/funcscan_arg), not a realistic assembly.
+    test("-profile test --assemblies (stub)") {
+
+        options "-stub-run"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                // Write a samplesheet on the fly instead of committing one: --assemblies is
+                // parsed by hand in workflows/plastier.nf (channel.fromPath().splitCsv()), not
+                // through schema-validated samplesheet resolution, so a relative fasta path's
+                // resolution isn't guaranteed - embed an absolute one via ${projectDir}.
+                def assemblies_csv = new File("$outputDir/assemblies.csv")
+                assemblies_csv.text = "sample,fasta\ntest_contig,${projectDir}/subworkflows/local/funcscan_arg/tests/data/test_contig.fasta\n"
+                assemblies = assemblies_csv.toString()
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+    }
+}

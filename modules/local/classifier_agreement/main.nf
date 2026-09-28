@@ -47,4 +47,16 @@ process CLASSIFIER_AGREEMENT {
         pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.classifier_agreement.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        classifier_agreement: \$(classifier_agreement.py --version | sed 's/classifier_agreement //g')
+        pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
+    END_VERSIONS
+    """
 }

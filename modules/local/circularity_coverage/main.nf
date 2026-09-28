@@ -38,4 +38,16 @@ process CIRCULARITY_COVERAGE {
         pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.circularity_coverage.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        circularity_coverage: \$(circularity_coverage.py --version | sed 's/circularity_coverage //g')
+        pandas: \$(python3 -c "import pandas; print(pandas.__version__)")
+    END_VERSIONS
+    """
 }
